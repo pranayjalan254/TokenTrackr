@@ -22,7 +22,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="watchlist" element={<WatchList />} />
+            <Route path="" element={<WatchList />} />
           </Route>
         </Routes>
       </AuthProvider>

@@ -5,10 +5,6 @@
   background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
   color: white;
 }
-.overlay {
-  background: rgba(6, 1, 33, 0.7);
-}
-
 .dashboard-header {
   background: rgba(0, 0, 0, 0.8);
   padding: 20px;
@@ -64,9 +60,6 @@
   margin-left: 20px;
 }
 
-.dashboard-sidebar {
-  width: 250px;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
+.wallet-address {
+  padding-top: 10px;
 }

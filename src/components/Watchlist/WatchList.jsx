@@ -12,25 +12,28 @@ const popularTokens = [
     logo: "/chainlink.svg",
   },
   {
-    address: "0x514910771af9ca656af840dff83e8264ecf986ca",
+    address: "0x5c69b8f723abf7c1d1d1e61d3b65a7e7b2f0d0c0",
     logo: "/chainlink.svg",
   },
   {
-    address: "0x514910771af9ca656af840dff83e8264ecf986ca",
+    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     logo: "/chainlink.svg",
   },
   {
-    address: "0x514910771af9ca656af840dff83e8264ecf986ca",
+    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
     logo: "/chainlink.svg",
   },
   {
-    address: "0x514910771af9ca656af840dff83e8264ecf986ca",
+    address: "0x95aD61b0a150d79219dCF64E1E6C4C6B4d4F6A3e",
     logo: "/chainlink.svg",
   },
 ];
 
 const WatchList = () => {
-  const [tokens, setTokens] = useState([]);
+  const [tokens, setTokens] = useState(() => {
+    const savedTokens = localStorage.getItem("tokens");
+    return savedTokens ? JSON.parse(savedTokens) : [];
+  });
   const [newToken, setNewToken] = useState("");
   const [tokenData, setTokenData] = useState({});
 
@@ -51,7 +54,9 @@ const WatchList = () => {
       const result = await validateToken(newToken);
       if (result) {
         if (!tokens.includes(newToken)) {
-          setTokens([...tokens, newToken]);
+          const updatedTokens = [...tokens, address];
+          setTokens(updatedTokens);
+          localStorage.setItem("tokens", JSON.stringify(updatedTokens));
           setNewToken("");
         }
       } else {
@@ -64,7 +69,9 @@ const WatchList = () => {
     if (!tokens.includes(address)) {
       const result = await validateToken(address);
       if (result) {
-        setTokens([...tokens, address]);
+        const updatedTokens = [...tokens, address];
+        setTokens(updatedTokens);
+        localStorage.setItem("tokens", JSON.stringify(updatedTokens));
       } else {
         alert("Failed to add popular token. Please try again.");
       }
