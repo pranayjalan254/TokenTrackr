@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { ethers } from "../../../ethers-5.6.esm.min.js";
 import "./WatchList.css";
+import { MdRemoveCircle } from "react-icons/md";
 
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-const ERC20_ABI = ["function name() view returns (string)"];
+const ERC20_ABI = [
+  "function name() view returns (string)",
+  "function balanceOf(address) view returns (uint256)",
+];
 
 const popularTokens = [
   {
@@ -41,7 +45,10 @@ const WatchList = () => {
     try {
       const contract = new ethers.Contract(token, ERC20_ABI, provider);
       const name = await contract.name();
-      const balance = await provider.getBalance(token);
+      const signer = provider.getSigner();
+      const userAddress = await signer.getAddress();
+      const balance = await contract.balanceOf(userAddress);
+
       return { name, balance: ethers.utils.formatEther(balance) };
     } catch (error) {
       console.error(`Error fetching data for ${token}:`, error);
@@ -54,7 +61,7 @@ const WatchList = () => {
       const result = await validateToken(newToken);
       if (result) {
         if (!tokens.includes(newToken)) {
-          const updatedTokens = [...tokens, address];
+          const updatedTokens = [...tokens, newToken];
           setTokens(updatedTokens);
           localStorage.setItem("tokens", JSON.stringify(updatedTokens));
           setNewToken("");
@@ -76,6 +83,12 @@ const WatchList = () => {
         alert("Failed to add popular token. Please try again.");
       }
     }
+  };
+
+  const handleRemoveToken = (address) => {
+    const updatedTokens = tokens.filter((token) => token !== address);
+    setTokens(updatedTokens);
+    localStorage.setItem("tokens", JSON.stringify(updatedTokens));
   };
 
   useEffect(() => {
@@ -134,6 +147,7 @@ const WatchList = () => {
                 <th>Token Name</th>
                 <th>Token Address</th>
                 <th>Balance</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -142,6 +156,11 @@ const WatchList = () => {
                   <td>{tokenData[token]?.name || "Loading..."}</td>
                   <td>{token}</td>
                   <td>{tokenData[token]?.balance || "Loading..."}</td>
+                  <td>
+                    <button onClick={() => handleRemoveToken(token)}>
+                      <MdRemoveCircle className="remove-icon" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

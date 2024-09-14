@@ -76,35 +76,33 @@ function Login() {
         web3authProvider
       );
       const signer = ethersProvider.getSigner();
-
       const address = await signer.getAddress();
       console.log("Wallet Address:", address);
-
       const balance = await ethersProvider.getBalance(address);
       console.log("Wallet Balance:", ethers.utils.formatEther(balance));
       login();
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
     }
   };
   const handleMetaMaskLogin = async () => {
     if (window.ethereum !== undefined) {
-      if (typeof window.ethereum !== "undefined") {
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          const address = await signer.getAddress();
-          console.log("Wallet Address:", address);
-          const balance = await provider.getBalance(address);
-          console.log("Wallet Balance:", ethers.utils.formatEther(balance));
-          login();
-        } catch (error) {
-          console.error("MetaMask login failed:", error);
-        }
-      } else {
-        console.error("MetaMask not detected. Please install MetaMask.");
+      try {
+        await window.ethereum.request({ method: "eth_requestAccounts" });
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log("Wallet Address:", address);
+        const balance = await provider.getBalance(address);
+        console.log("Wallet Balance:", ethers.utils.formatEther(balance));
+        login();
+        navigate("/dashboard");
+      } catch (error) {
+        console.error("MetaMask login failed:", error);
       }
+    } else {
+      console.error("MetaMask not detected. Please install MetaMask.");
     }
   };
 
