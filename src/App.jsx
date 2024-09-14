@@ -6,7 +6,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "../ProtectedRoute";
 import { AuthProvider } from "../AuthContext";
 import WatchList from "./components/Watchlist/WatchList";
-
+import TokenTransfer from "./components/TokenTransfer/TokenTransfer";
 function App() {
   return (
     <Router>
@@ -23,6 +23,7 @@ function App() {
             }
           >
             <Route path="" element={<WatchList />} />
+            <Route path="transfer" element={<TokenTransfer />} />
           </Route>
         </Routes>
       </AuthProvider>

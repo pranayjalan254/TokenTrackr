@@ -1,0 +1,85 @@
+.token-transfer-container {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  margin: auto;
+}
+
+.token-transfer-container h2 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  background: #0f2027;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #203a43;
+}
+
+.status-message {
+  margin-top: 15px;
+  color: #ff4d4d;
+}
+
+.modal {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background: #e3f2fd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transaction-details {
+  margin-top: 20px;
+}
+
+.transaction-details p {
+  margin: 5px 0;
+  font-size: small;
+  padding-bottom: 5px;
+}
+
+.transaction-details strong {
+  display: inline-block;
+  width: 150px;
+  color: #0d47a1;
+}

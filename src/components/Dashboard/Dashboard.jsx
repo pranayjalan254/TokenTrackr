@@ -8,7 +8,7 @@ import "./Dashboard.css";
 const provider = new ethers.providers.Web3Provider(window.ethereum);
 
 const Dashboard = () => {
-  const { logout, userProfile } = useAuth(); // Assuming `userProfile` provides the necessary profile info
+  const { logout } = useAuth();
   const [walletAddress, setWalletAddress] = useState("");
   const [ethBalance, setEthBalance] = useState("0");
 
