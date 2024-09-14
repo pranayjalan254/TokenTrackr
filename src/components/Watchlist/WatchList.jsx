@@ -12,24 +12,24 @@ const ERC20_ABI = [
 
 const popularTokens = [
   {
-    address: "0x514910771af9ca656af840dff83e8264ecf986ca",
-    logo: "/chainlink.svg",
-  },
-  {
-    address: "0x5c69b8f723abf7c1d1d1e61d3b65a7e7b2f0d0c0",
-    logo: "/chainlink.svg",
-  },
-  {
     address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    logo: "/chainlink.svg",
+    logo: "/usdc.png",
   },
   {
     address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-    logo: "/chainlink.svg",
+    logo: "/tether.png",
   },
   {
-    address: "0x95aD61b0a150d79219dCF64E1E6C4C6B4d4F6A3e",
-    logo: "/chainlink.svg",
+    address: "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
+    logo: "/aave.webp",
+  },
+  {
+    address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+    logo: "/btc.png",
+  },
+  {
+    address: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+    logo: "/chainlink.png",
   },
 ];
 
@@ -47,7 +47,9 @@ const WatchList = () => {
       const name = await contract.name();
       const signer = provider.getSigner();
       const userAddress = await signer.getAddress();
+      console.log(userAddress);
       const balance = await contract.balanceOf(userAddress);
+      console.log(ethers.utils.formatEther(balance));
 
       return { name, balance: ethers.utils.formatEther(balance) };
     } catch (error) {
