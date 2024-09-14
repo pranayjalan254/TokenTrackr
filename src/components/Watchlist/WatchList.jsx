@@ -149,7 +149,7 @@ const WatchList = () => {
                 <th>Token Name</th>
                 <th>Token Address</th>
                 <th>Balance</th>
-                <th>Action</th>
+                <th>Remove</th>
               </tr>
             </thead>
             <tbody>

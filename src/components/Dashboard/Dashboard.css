@@ -1,11 +1,13 @@
 .dashboard-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
   background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
   color: white;
 }
+
 .dashboard-header {
-  background: rgba(0, 0, 0, 0.8);
+  background: #16262c;
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -18,47 +20,97 @@
 
 .dashboard-header nav ul {
   list-style: none;
-  padding: 0;
   margin: 10px 0 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .dashboard-header nav ul li {
-  display: inline;
-  margin: 0 10px;
+  margin: 5px 10px;
 }
 
 .dashboard-header nav ul li a {
-  color: #8589ff;
+  color: #00a9c7;
   text-decoration: none;
   font-size: 1.1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+}
+.dashboard-header nav ul li button {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.dashboard-header nav ul li a:hover {
-  text-decoration: underline;
+.dashboard-header nav ul li a:hover,
+.dashboard-header nav ul li button:hover {
+  background: linear-gradient(135deg, #203a43, #2c5364, #0f2027);
+  transform: scale(1.05);
 }
 
 .dashboard-main {
-  flex: 1;
+  display: grid;
+  grid-template-columns: 0.75fr 2fr;
+  gap: 20px;
   padding: 20px;
-  display: flex;
-  flex-direction: row;
-}
-
-.dashboard-summary {
-  flex: 1;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
+  overflow-y: auto;
 }
 
 .dashboard-content {
-  flex: 2;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
+  background: #16262c;
   border-radius: 10px;
-  margin-left: 20px;
+  padding: 20px;
+  min-height: 300px;
+  overflow-y: auto;
+}
+.dashboard-summary {
+  background: #162328;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 300px;
+  overflow-y: auto;
+  position: relative;
+}
+.dashboard-summary button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 24px;
+  width: 90%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .wallet-address {
+  word-break: break-all;
   padding-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-summary,
+  .dashboard-content {
+    min-height: 200px;
+  }
 }

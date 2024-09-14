@@ -1,9 +1,9 @@
 .token-allowance-container {
-  background: rgba(0, 0, 0, 0.7);
+  background: linear-gradient(to bottom, #043244 0%, #2b404a 100%);
   padding: 20px;
   border-radius: 10px;
   color: white;
-  max-width: 600px;
+
   margin: auto;
 }
 

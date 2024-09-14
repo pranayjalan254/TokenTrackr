@@ -36,7 +36,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Dashboard</h1>
+        <h1>TokenTrackr</h1>
         <nav>
           <ul>
             <li>
@@ -51,21 +51,19 @@ const Dashboard = () => {
             <li>
               <Link to="transfer">Transfer</Link>
             </li>
-            <li>
-              <button onClick={handleLogout}>Logout</button>
-            </li>
           </ul>
         </nav>
       </header>
       <main className="dashboard-main">
         <section className="dashboard-summary">
-          <h2>Welcome User!</h2>
+          <h2>Welcome Back!</h2>
           <p className="wallet-address">
             <strong>Wallet Address:</strong> {walletAddress}
           </p>
           <p className="wallet-address">
             <strong>ETH Balance:</strong> {ethBalance} ETH
           </p>
+          <button onClick={handleLogout}>Logout</button>
         </section>
         <section className="dashboard-content">
           <Outlet />

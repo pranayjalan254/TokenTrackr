@@ -130,27 +130,25 @@ function Login() {
 
   return (
     <div className="login-container">
-      <div className="overlay">
-        <div className="login-card">
-          <h2 className="login-title">SignUp / Login</h2>
-          <div className="login-buttons">
-            <button onClick={handleLogin} className="login-button">
-              {loading ? "Connecting..." : "Login with Web3Auth"}
+      <div className="login-card">
+        <h2 className="login-title">SignUp / Login</h2>
+        <div className="login-buttons">
+          <button onClick={handleLogin} className="login-button">
+            {loading ? "Connecting..." : "Login with Web3Auth"}
+          </button>
+          <button onClick={handleMetaMaskLogin} className="login-button">
+            {loading ? "Connecting..." : "Connect with Metamask"}
+          </button>
+          <div className="wallet-address-input">
+            <input
+              type="text"
+              value={walletAddress}
+              onChange={(e) => setWalletAddress(e.target.value)}
+              placeholder="Enter wallet address"
+            />
+            <button onClick={handleAddressInput} className="input-button">
+              Connect with Address
             </button>
-            <button onClick={handleMetaMaskLogin} className="login-button">
-              {loading ? "Connecting..." : "Connect with Metamask"}
-            </button>
-            <div className="wallet-address-input">
-              <input
-                type="text"
-                value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-                placeholder="Enter wallet address"
-              />
-              <button onClick={handleAddressInput} className="input-button">
-                Connect with Address
-              </button>
-            </div>
           </div>
         </div>
       </div>
