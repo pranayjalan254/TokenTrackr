@@ -5,6 +5,7 @@ import Login from "./components/SignUp/signup";
 import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "../ProtectedRoute";
 import { AuthProvider } from "../AuthContext";
+import WatchList from "./components/Watchlist/WatchList";
 
 function App() {
   return (
@@ -20,7 +21,9 @@ function App() {
                 <Dashboard />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="watchlist" element={<WatchList />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </Router>

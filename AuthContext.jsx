@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const login = () => {
     setIsAuthenticated(true);
     localStorage.setItem("isAuthenticated", "true");
+    navigate("/dashboard");
   };
 
   const logout = () => {
@@ -19,12 +20,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("isAuthenticated");
     navigate("/login");
   };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
