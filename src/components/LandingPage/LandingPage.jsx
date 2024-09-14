@@ -1,7 +1,8 @@
-import React from "react";
 import "./LandingPage.css";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="landing-container">
       <div className="overlay">
@@ -10,7 +11,12 @@ const LandingPage = () => {
           <p className="subtitle">
             Monitor, track, and manage your tokens effortlessly.
           </p>
-          <button className="get-started-btn">Get Started</button>
+          <button
+            className="get-started-btn"
+            onClick={() => navigate("/login")}
+          >
+            Get Started
+          </button>
         </div>
       </div>
     </div>
