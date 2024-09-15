@@ -40,6 +40,7 @@ const WatchList = () => {
   const [newToken, setNewToken] = useState("");
   const [tokenData, setTokenData] = useState({});
   const [provider, setProvider] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const setupProvider = async () => {
@@ -64,14 +65,15 @@ const WatchList = () => {
 
   const validateToken = async (token) => {
     try {
+      if (!provider) {
+        throw new Error("Provider not initialized");
+      }
+
       const contract = new ethers.Contract(token, ERC20_ABI, provider);
       const name = await contract.name();
       const signer = provider.getSigner();
       const userAddress = await signer.getAddress();
-      console.log(userAddress);
       const balance = await contract.balanceOf(userAddress);
-      console.log(ethers.utils.formatEther(balance));
-
       return { name, balance: ethers.utils.formatEther(balance) };
     } catch (error) {
       console.error(`Error fetching data for ${token}:`, error);
@@ -116,6 +118,8 @@ const WatchList = () => {
 
   useEffect(() => {
     const fetchTokenData = async () => {
+      if (!provider) return; // Ensure provider is available
+
       const newTokenData = {};
       for (const token of tokens) {
         const result = await validateToken(token);
@@ -132,11 +136,12 @@ const WatchList = () => {
     };
 
     fetchTokenData();
-  }, [tokens]);
+  }, [tokens, provider]); // Include provider in dependency array
 
   return (
     <div className="watchlist-container">
       <h2>Watch List</h2>
+      {error && <p className="error">{error}</p>}
       <div className="add-token">
         <input
           type="text"

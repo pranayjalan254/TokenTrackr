@@ -35,7 +35,7 @@
 .get-started-btn {
   padding: 14px 28px;
   font-size: 1.1rem;
-  background: linear-gradient(to right, #8589ff, #1e005f);
+  background: linear-gradient(to right, #8b999d, #182c32);
   color: white;
   border: none;
   border-radius: 50px;
@@ -45,7 +45,7 @@
 }
 
 .get-started-btn:hover {
-  background: linear-gradient(to right, #5258ff, #0b0023);
+  background: linear-gradient(to right, #003040, #203a43);
   transform: translateY(-2px);
 }
 

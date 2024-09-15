@@ -64,12 +64,9 @@ function Login() {
   useEffect(() => {
     const init = async () => {
       try {
-        web3auth.configureAdapter(metamaskAdapter);
         await web3auth.initModal();
+        web3auth.configureAdapter(metamaskAdapter);
         setProvider(web3auth.provider);
-        if (web3auth.connected) {
-          navigate("/dashboard");
-        }
       } catch (error) {
         console.error("Error initializing Web3Auth:", error);
       }
