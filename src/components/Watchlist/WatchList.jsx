@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "../../../ethers-5.6.esm.min.js";
 import "./WatchList.css";
 import { MdRemoveCircle } from "react-icons/md";
-
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+import { web3auth } from "../SignUp/signup";
 
 const ERC20_ABI = [
   "function name() view returns (string)",
@@ -40,6 +39,28 @@ const WatchList = () => {
   });
   const [newToken, setNewToken] = useState("");
   const [tokenData, setTokenData] = useState({});
+  const [provider, setProvider] = useState(null);
+
+  useEffect(() => {
+    const setupProvider = async () => {
+      try {
+        if (web3auth.connected) {
+          const web3authProvider = await web3auth.connect();
+          setProvider(new ethers.providers.Web3Provider(web3authProvider));
+        } else if (window.ethereum) {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          setProvider(new ethers.providers.Web3Provider(window.ethereum));
+        } else {
+          setError("No wallet provider found. Please connect a wallet.");
+        }
+      } catch (err) {
+        setError("Error connecting to wallet. Please try again.");
+        console.error("Provider setup error:", err);
+      }
+    };
+
+    setupProvider();
+  }, []);
 
   const validateToken = async (token) => {
     try {

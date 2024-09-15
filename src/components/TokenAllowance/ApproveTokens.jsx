@@ -8,6 +8,7 @@ const ApproveTokens = ({
   approveTokens,
   success,
   error,
+  isApproving,
 }) => {
   const handleApprove = async () => {
     try {
@@ -52,7 +53,9 @@ const ApproveTokens = ({
         />
       </div>
 
-      <button onClick={handleApprove}>Approve Tokens</button>
+      <button onClick={handleApprove} disabled={isApproving}>
+        {isApproving ? "Approving..." : "Approve"}
+      </button>
 
       {success && <p className="success-message">{success}</p>}
       {error && <p className="error-message">{error}</p>}

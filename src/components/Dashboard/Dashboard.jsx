@@ -5,19 +5,30 @@ import { useState, useEffect } from "react";
 import { ethers } from "../../../ethers-5.6.esm.min.js";
 import "./Dashboard.css";
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+let provider;
 
 const Dashboard = () => {
   const { logout } = useAuth();
   const [walletAddress, setWalletAddress] = useState("");
   const [ethBalance, setEthBalance] = useState("0");
+  const [isWeb3Auth, setIsWeb3Auth] = useState(false);
 
   useEffect(() => {
     const fetchWalletInfo = async () => {
       try {
+        if (web3auth.connected) {
+          const web3authProvider = await web3auth.connect();
+          provider = new ethers.providers.Web3Provider(web3authProvider);
+          setIsWeb3Auth(true);
+        } else if (window.ethereum) {
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+        }
+
         const signer = provider.getSigner();
         const address = await signer.getAddress();
         const balance = await provider.getBalance(address);
+
         setWalletAddress(address);
         setEthBalance(ethers.utils.formatEther(balance));
       } catch (error) {
@@ -29,7 +40,9 @@ const Dashboard = () => {
   }, []);
 
   const handleLogout = async () => {
-    if (web3auth.connected) await web3auth.logout();
+    if (isWeb3Auth && web3auth.connected) {
+      await web3auth.logout();
+    }
     logout();
   };
 

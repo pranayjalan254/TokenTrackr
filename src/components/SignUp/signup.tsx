@@ -15,15 +15,26 @@ declare global {
 }
 const clientId = import.meta.env.VITE_CLIENT_ID ?? "";
 
+// export const chainConfig = {
+//   chainNamespace: CHAIN_NAMESPACES.EIP155,
+//   chainId: "0x1",
+//   rpcTarget:
+//     "https://eth-mainnet.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
+//   displayName: "Ethereum Mainnet",
+//   blockExplorer: "https://etherscan.io/",
+//   ticker: "ETH",
+//   tickerName: "Ether",
+// };
+
 export const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
-  chainId: "0x1",
+  chainId: "0xaa36a7",
   rpcTarget:
-    "https://eth-mainnet.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
-  displayName: "Ethereum Mainnet",
-  blockExplorer: "https://etherscan.io/",
+    "https://eth-sepolia.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
+  displayName: "Ethereum Sepolia Testnet",
+  blockExplorer: "https://sepolia.etherscan.io/",
   ticker: "ETH",
-  tickerName: "Ether",
+  tickerName: "Sepolia Ether",
 };
 
 const privateKeyProvider = new EthereumPrivateKeyProvider({
@@ -67,11 +78,10 @@ function Login() {
     init();
   }, [navigate]);
 
-  const handleLogin = async () => {
+  const handleWeb3AuthLogin = async () => {
     try {
       const web3authProvider = await web3auth.connect();
       setProvider(web3authProvider);
-
       const ethersProvider = new ethers.providers.Web3Provider(
         web3authProvider
       );
@@ -133,7 +143,7 @@ function Login() {
       <div className="login-card">
         <h2 className="login-title">SignUp / Login</h2>
         <div className="login-buttons">
-          <button onClick={handleLogin} className="login-button">
+          <button onClick={handleWeb3AuthLogin} className="login-button">
             {loading ? "Connecting..." : "Login with Web3Auth"}
           </button>
           <button onClick={handleMetaMaskLogin} className="login-button">

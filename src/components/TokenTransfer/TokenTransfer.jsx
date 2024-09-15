@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "../../../ethers-5.6.esm.min.js";
 import Modal from "react-modal";
 import "./TokenTransfer.css";
+import { web3auth } from "../SignUp/signup";
 
 const TokenTransfer = () => {
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -9,13 +10,42 @@ const TokenTransfer = () => {
   const [loading, setLoading] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [provider, setProvider] = useState(null);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const setupProvider = async () => {
+      try {
+        if (web3auth.connected) {
+          const web3authProvider = await web3auth.connect();
+          setProvider(new ethers.providers.Web3Provider(web3authProvider));
+        } else if (window.ethereum) {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          setProvider(new ethers.providers.Web3Provider(window.ethereum));
+        } else {
+          setError("No wallet provider found. Please connect a wallet.");
+        }
+      } catch (err) {
+        setError("Error connecting to wallet. Please try again.");
+        console.error("Provider setup error:", err);
+      }
+    };
+
+    setupProvider();
+  }, []);
 
   const handleTransfer = async (e) => {
     e.preventDefault();
     setLoading(true);
     setTransactionDetails(null);
+
+    if (!provider) {
+      setError("No wallet connected. Please connect a wallet first.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const tx = {
         to: recipientAddress,
@@ -23,6 +53,7 @@ const TokenTransfer = () => {
       };
       const transaction = await signer.sendTransaction(tx);
       const receipt = await transaction.wait();
+
       setTransactionDetails({
         hash: transaction.hash,
         from: transaction.from,
@@ -35,6 +66,7 @@ const TokenTransfer = () => {
       setModalIsOpen(true);
       setRecipientAddress("");
       setAmount("");
+      setError("");
     } catch (error) {
       console.error("Error processing transaction:", error);
       alert("Payment failed. Please try again.");
@@ -46,6 +78,7 @@ const TokenTransfer = () => {
   return (
     <div className="token-transfer-container">
       <h2>Token Transfer</h2>
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleTransfer}>
         <div className="form-group">
           <label htmlFor="recipient">Recipient Address</label>
