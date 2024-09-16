@@ -133,17 +133,12 @@ const TokenAllowance = () => {
         {tokens
           .filter((t) => t.symbol !== "ETH")
           .map((tokenItem) => (
-            <button
-              key={tokenItem.symbol}
-              className="token-button"
+            <img
+              src={tokenItem.logo}
+              alt={tokenItem.symbol}
+              className="token-logo"
               onClick={() => handleTokenSelect(tokenItem.address)}
-            >
-              <img
-                src={tokenItem.logo}
-                alt={tokenItem.symbol}
-                className="token-logo"
-              />
-            </button>
+            />
           ))}
       </div>
 

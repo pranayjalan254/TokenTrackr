@@ -3,11 +3,10 @@
   padding: 20px;
   border-radius: 10px;
   margin: auto;
-  max-width: 600px;
 }
 
 .token-transfer-container h2 {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   color: #ffffff;
 }
 
@@ -98,16 +97,16 @@
   color: #0d47a1;
 }
 
-.token-button {
-  background: transparent;
-  border: none;
-  padding: 0;
+.token-logo {
+  width: 50px;
+  height: 50px;
+  margin: 30px 20px;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.token-logo {
-  width: 40px;
-  height: 40px;
+.token-logo:hover {
+  transform: scale(1.1);
 }
 
 .custom-token {
