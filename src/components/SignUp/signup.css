@@ -1,7 +1,7 @@
-/* Container matching the landing page background and overlay */
 .login-container {
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
@@ -17,6 +17,7 @@
   width: 100%;
   text-align: center;
   z-index: 1;
+  margin-bottom: 20px;
 }
 
 .login-title {
@@ -71,6 +72,11 @@
   margin-top: 10px;
 }
 
+.login-note {
+  color: rgb(245, 245, 245);
+  font-size: 0.8rem;
+  text-align: center;
+}
 @media (max-width: 768px) {
   .login-title {
     font-size: 2rem;

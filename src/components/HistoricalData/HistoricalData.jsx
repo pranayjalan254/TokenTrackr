@@ -32,6 +32,8 @@ const config = {
 
 const alchemy = new Alchemy(config);
 
+const averageBlockTime = 13;
+
 const HistoricalDataChart = () => {
   const [historicalData, setHistoricalData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -72,43 +74,25 @@ const HistoricalDataChart = () => {
     setupProvider();
   }, [web3auth]);
 
-  const getBlockNumberForDate = async (date) => {
+  const getStartingBlockForDay = async (date) => {
     const targetTimestamp = Math.floor(date.getTime() / 1000);
-    let left = 0;
-    let right = await alchemy.core.getBlockNumber();
+    const latestBlock = await alchemy.core.getBlockNumber();
+    const latestBlockData = await alchemy.core.getBlock(latestBlock);
+    const latestBlockTimestamp = latestBlockData.timestamp;
 
-    while (left <= right) {
-      const mid = Math.floor((left + right) / 2);
-      const block = await alchemy.core.getBlock(mid);
-
-      if (block.timestamp === targetTimestamp) {
-        return mid;
-      } else if (block.timestamp < targetTimestamp) {
-        left = mid + 1;
-      } else {
-        right = mid - 1;
-      }
-    }
-    return right;
+    const timeDifference = latestBlockTimestamp - targetTimestamp;
+    const estimatedBlocksAgo = Math.floor(timeDifference / averageBlockTime);
+    const estimatedBlock = latestBlock - estimatedBlocksAgo;
+    return estimatedBlock;
   };
 
   const getBalanceForDate = async (date) => {
     if (!walletAddress) return 0;
-    const startBlockNumber = await getBlockNumberForDate(
-      new Date(date.setHours(0, 0, 0, 0))
-    );
-    const endBlockNumber = await getBlockNumberForDate(
-      new Date(date.setHours(23, 59, 59, 999))
-    );
-
-    const randomBlockNumber =
-      Math.floor(Math.random() * (endBlockNumber - startBlockNumber + 1)) +
-      startBlockNumber;
+    const startingBlockNumber = await getStartingBlockForDay(date);
     const balance = await alchemy.core.getBalance(
       walletAddress,
-      randomBlockNumber
+      startingBlockNumber
     );
-
     return Utils.formatEther(balance);
   };
 

@@ -138,7 +138,7 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2 className="login-title">SignUp / Login</h2>
+        <h2 className="login-title">Login</h2>
         <div className="login-buttons">
           <button onClick={handleWeb3AuthLogin} className="login-button">
             {loading ? "Connecting..." : "Login with Web3Auth"}
@@ -158,6 +158,9 @@ function Login() {
             </button>
           </div>
         </div>
+      </div>
+      <div className="login-note">
+        <h3>Note: For full functionality login with web3auth or metamask</h3>
       </div>
     </div>
   );

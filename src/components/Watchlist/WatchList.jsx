@@ -4,29 +4,7 @@ import "./WatchList.css";
 import { MdRemoveCircle } from "react-icons/md";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
-
-const popularTokens = [
-  {
-    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    logo: "/usdc.png",
-  },
-  {
-    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
-    logo: "/tether.png",
-  },
-  {
-    address: "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9",
-    logo: "/aave.webp",
-  },
-  {
-    address: "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
-    logo: "/btc.png",
-  },
-  {
-    address: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
-    logo: "/chainlink.png",
-  },
-];
+import { popularTokens } from "../../../PopularTokens.js";
 
 const WatchList = () => {
   const [tokens, setTokens] = useState(() => {
@@ -88,7 +66,9 @@ const WatchList = () => {
           setNewToken("");
         }
       } else {
-        alert("Failed to add token. Please check the address and try again.");
+        alert(
+          "Failed to add token. Please check the address or network and try again."
+        );
       }
     }
   };
@@ -101,7 +81,7 @@ const WatchList = () => {
         setTokens(updatedTokens);
         localStorage.setItem("tokens", JSON.stringify(updatedTokens));
       } else {
-        alert("Failed to add popular token. Please try again.");
+        alert("Failed to add popular token. Please try again changing network");
       }
     }
   };

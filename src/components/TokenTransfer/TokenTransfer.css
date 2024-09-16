@@ -3,10 +3,12 @@
   padding: 20px;
   border-radius: 10px;
   margin: auto;
+  max-width: 600px;
 }
 
 .token-transfer-container h2 {
   margin-bottom: 20px;
+  color: #ffffff;
 }
 
 .form-group {
@@ -16,6 +18,7 @@
 .form-group label {
   display: block;
   margin-bottom: 5px;
+  color: #ffffff;
 }
 
 .form-group input {
@@ -25,7 +28,8 @@
   border-radius: 5px;
 }
 
-button {
+.payment-button,
+.custom-token button {
   background: #0f2027;
   color: white;
   border: none;
@@ -34,8 +38,22 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.payment-button:hover,
+.custom-token button:hover {
   background: #203a43;
+}
+
+.reset-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.reset-button:hover {
+  background: #c62828;
 }
 
 .status-message {
@@ -50,10 +68,6 @@ button:hover {
   background: #e3f2fd;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  position: absolute;
 }
 
 .modal-overlay {
@@ -84,53 +98,33 @@ button:hover {
   color: #0d47a1;
 }
 
-.token-dropdown {
-  position: relative;
-  margin-bottom: 15px;
-}
-
-.token-dropdown select {
-  width: 60%;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #ffffff;
-  color: #333;
-  font-size: 1rem;
-  appearance: none;
-  outline: none;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
+.token-button {
+  background: transparent;
+  border: none;
+  padding: 0;
   cursor: pointer;
 }
 
-.token-dropdown select:hover {
-  background-color: #ebeff2;
+.token-logo {
+  width: 40px;
+  height: 40px;
 }
 
-.token-dropdown select:focus {
-  border-color: #0d47a1;
-  background-color: #ffffff;
+.custom-token {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.token-dropdown::after {
-  content: "▼";
-  position: absolute;
-  right: 42%;
-  top: 54%;
-  color: #666;
-  pointer-events: none;
-}
-
-.token-dropdown select option {
+.custom-token input {
+  flex: 1;
+  height: 35px;
+  border-radius: 5px;
   padding: 10px;
-  background-color: #ffffff;
-  color: #333;
-  border-bottom: 1px solid #f3f6f9;
-}
-
-.token-dropdown select option:hover {
-  background-color: #ebeff2;
 }
 
 .balance-display {
-  padding-bottom: 20px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  color: #ffffff;
 }

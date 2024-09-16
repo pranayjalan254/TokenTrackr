@@ -45,11 +45,11 @@ This is the alchemy API Key to fetch the historical token balances. You need to 
 
 [TokenTrackr](https://token-trackr.vercel.app/)
 
-## Support
-
-For support, email pranayjalan.work@gmail.com
-
 ## Tech Stack
 
 **Client:** ReactJS, Vanilla CSS  
 **Blockchain:** Ether.js
+
+## Support
+
+For support, email pranayjalan.work@gmail.com

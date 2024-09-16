@@ -4,6 +4,7 @@ import Modal from "react-modal";
 import "./TokenTransfer.css";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
+import { popularTokens } from "../../../PopularTokens.js";
 
 const TokenTransfer = () => {
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -14,14 +15,15 @@ const TokenTransfer = () => {
   const [provider, setProvider] = useState(null);
   const [error, setError] = useState("");
   const [token, setToken] = useState("ETH");
+  const [tokenName, setTokenName] = useState("Eth");
+  const [customToken, setCustomToken] = useState("");
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [tokens] = useState([
-    { symbol: "ETH", address: null },
-    {
-      symbol: "ChainLink",
-      address: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
-    },
-  ]);
+  const [resetButtonVisible, setResetButtonVisible] = useState(false);
+
+  const tokens = [
+    { symbol: "ETH", address: null, name: "Eth" },
+    ...popularTokens,
+  ];
 
   useEffect(() => {
     const setupProvider = async () => {
@@ -44,6 +46,27 @@ const TokenTransfer = () => {
     setupProvider();
   }, []);
 
+  useEffect(() => {
+    fetchTokenBalance();
+  }, [token, provider]);
+
+  const fetchTokenName = async (tokenAddress) => {
+    if (!provider) return;
+
+    try {
+      const tokenContract = new ethers.Contract(
+        tokenAddress,
+        ERC20_ABI,
+        provider
+      );
+      const name = await tokenContract.name();
+      setTokenName(name);
+    } catch (err) {
+      console.error("Error fetching token name:", err);
+      setTokenName("Unknown Token");
+    }
+  };
+
   const fetchTokenBalance = async () => {
     if (!provider) return;
 
@@ -54,19 +77,17 @@ const TokenTransfer = () => {
       const balance = await provider.getBalance(address);
       setTokenBalance(ethers.utils.formatEther(balance));
     } else {
-      const tokenContract = new ethers.Contract(
-        tokens.find((t) => t.symbol === token).address,
-        ERC20_ABI,
-        signer
-      );
-      const balance = await tokenContract.balanceOf(address);
-      setTokenBalance(ethers.utils.formatUnits(balance, 18));
+      try {
+        await fetchTokenName(token);
+        const tokenContract = new ethers.Contract(token, ERC20_ABI, provider);
+        const balance = await tokenContract.balanceOf(address);
+        setTokenBalance(ethers.utils.formatUnits(balance, 18));
+      } catch (err) {
+        console.error("Error fetching token balance:", err);
+        setError("Invalid token address or token not found.");
+      }
     }
   };
-
-  useEffect(() => {
-    fetchTokenBalance();
-  }, [token, provider]);
 
   const handleTransfer = async (e) => {
     e.preventDefault();
@@ -99,17 +120,11 @@ const TokenTransfer = () => {
           blockNumber: receipt.blockNumber,
         });
       } else {
-        const tokenContract = new ethers.Contract(
-          tokens.find((t) => t.symbol === token).address,
-          ERC20_ABI,
-          signer
-        );
-
+        const tokenContract = new ethers.Contract(token, ERC20_ABI, signer);
         const transaction = await tokenContract.transfer(
           recipientAddress,
           ethers.utils.parseUnits(amount, 18)
         );
-
         const receipt = await transaction.wait();
         setTransactionDetails({
           hash: transaction.hash,
@@ -133,31 +148,79 @@ const TokenTransfer = () => {
     }
   };
 
+  const handleTokenSelect = (tokenAddress) => {
+    setToken(tokenAddress);
+    setResetButtonVisible(true);
+  };
+
+  const handleResetToETH = () => {
+    setToken("ETH");
+    setTokenName("Eth");
+    setCustomToken("");
+    setResetButtonVisible(false);
+  };
+
   return (
     <div className="token-transfer-container">
       <h2>Token Transfer</h2>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="status-message">{error}</p>}
+      <div className="selected-token-info">
+        {resetButtonVisible && (
+          <button className="reset-button" onClick={handleResetToETH}>
+            Reset to ETH
+          </button>
+        )}
+      </div>
+      <div className="popular-tokens">
+        {tokens
+          .filter((t) => t.symbol !== "ETH")
+          .map((tokenItem) => (
+            <button
+              key={tokenItem.symbol}
+              className="token-button"
+              onClick={() => handleTokenSelect(tokenItem.address)}
+            >
+              <img
+                src={tokenItem.logo}
+                alt={tokenItem.symbol}
+                className="token-logo"
+              />
+            </button>
+          ))}
+      </div>
+      <div className="custom-token">
+        <input
+          type="text"
+          placeholder="Enter custom token address"
+          value={customToken}
+          onChange={(e) => {
+            setCustomToken(e.target.value);
+            setResetButtonVisible(true);
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => {
+            if (customToken) {
+              setToken(customToken);
+              fetchTokenName(customToken);
+              setCustomToken("");
+              setResetButtonVisible(true);
+            }
+          }}
+        >
+          Add Custom Token
+        </button>
+      </div>
+      <div className="balance-display">
+        <p>Currently Selected Token: {tokenName}</p>
+      </div>
+      <div className="balance-display">
+        <p>
+          Balance: {tokenBalance} {tokenName}
+        </p>
+      </div>
       <form onSubmit={handleTransfer}>
-        <div className="form-group token-dropdown">
-          <label htmlFor="token">Select Token</label>
-          <select
-            id="token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-          >
-            {tokens.map((token) => (
-              <option key={token.symbol} value={token.symbol}>
-                {token.symbol}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="balance-display">
-          <p>
-            Balance: {tokenBalance} {token}
-          </p>
-        </div>
         <div className="form-group">
           <label htmlFor="recipient">Recipient Address</label>
           <input
@@ -180,7 +243,7 @@ const TokenTransfer = () => {
             required
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <button className="payment-button" type="submit" disabled={loading}>
           {loading ? "Sending..." : "Send Payment"}
         </button>
       </form>
@@ -204,7 +267,7 @@ const TokenTransfer = () => {
               <strong>To:</strong> {transactionDetails.to}
             </p>
             <p>
-              <strong>Value:</strong> {transactionDetails.value} {token}
+              <strong>Value:</strong> {transactionDetails.value} {tokenName}
             </p>
             <p>
               <strong>Gas Price:</strong> {transactionDetails.gasPrice} GWEI
@@ -216,10 +279,9 @@ const TokenTransfer = () => {
         ) : (
           <p>No transaction details available.</p>
         )}
-        <button onClick={() => setModalIsOpen(false)}>Close</button>
-      </Modal>
+        <button onClick={() => setModalIsOpen(false)}>Close</button>{" "}
+      </Modal>{" "}
     </div>
   );
 };
-
 export default TokenTransfer;
