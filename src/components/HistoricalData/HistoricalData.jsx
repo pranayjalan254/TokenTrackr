@@ -26,7 +26,7 @@ ChartJS.register(
 );
 
 const config = {
-  apiKey: "Eni5THenJtUWs4oixXBwi2KRBDk8iMAH",
+  apiKey: import.meta.env.VITE_API_KEY,
   network: Network.ETH_SEPOLIA,
 };
 
