@@ -3,11 +3,7 @@ import { ethers } from "../../../ethers-5.6.esm.min.js";
 import "./WatchList.css";
 import { MdRemoveCircle } from "react-icons/md";
 import { web3auth } from "../SignUp/signup";
-
-const ERC20_ABI = [
-  "function name() view returns (string)",
-  "function balanceOf(address) view returns (uint256)",
-];
+import { ERC20_ABI } from "../../../ERC20_ABI.js";
 
 const popularTokens = [
   {

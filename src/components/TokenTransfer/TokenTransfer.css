@@ -83,3 +83,54 @@ button:hover {
   width: 150px;
   color: #0d47a1;
 }
+
+.token-dropdown {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.token-dropdown select {
+  width: 60%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #333;
+  font-size: 1rem;
+  appearance: none;
+  outline: none;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.token-dropdown select:hover {
+  background-color: #ebeff2;
+}
+
+.token-dropdown select:focus {
+  border-color: #0d47a1;
+  background-color: #ffffff;
+}
+
+.token-dropdown::after {
+  content: "▼";
+  position: absolute;
+  right: 42%;
+  top: 54%;
+  color: #666;
+  pointer-events: none;
+}
+
+.token-dropdown select option {
+  padding: 10px;
+  background-color: #ffffff;
+  color: #333;
+  border-bottom: 1px solid #f3f6f9;
+}
+
+.token-dropdown select option:hover {
+  background-color: #ebeff2;
+}
+
+.balance-display {
+  padding-bottom: 20px;
+}

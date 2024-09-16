@@ -4,12 +4,7 @@ import "./TokenAllowance.css";
 import CheckAllowance from "./CheckAllowance";
 import ApproveTokens from "./ApproveTokens";
 import { web3auth } from "../SignUp/signup";
-
-const ERC20_ABI = [
-  "function allowance(address owner, address spender) view returns (uint256)",
-  "function approve(address spender, uint256 amount) external returns (bool)",
-  "function balanceOf(address owner) view returns (uint256)",
-];
+import { ERC20_ABI } from "../../../ERC20_ABI.js";
 
 const TokenAllowance = () => {
   const [tokenAddress, setTokenAddress] = useState("");

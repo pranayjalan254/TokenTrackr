@@ -3,6 +3,7 @@ import { ethers } from "../../../ethers-5.6.esm.min.js";
 import Modal from "react-modal";
 import "./TokenTransfer.css";
 import { web3auth } from "../SignUp/signup";
+import { ERC20_ABI } from "../../../ERC20_ABI.js";
 
 const TokenTransfer = () => {
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -12,6 +13,15 @@ const TokenTransfer = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [provider, setProvider] = useState(null);
   const [error, setError] = useState("");
+  const [token, setToken] = useState("ETH");
+  const [tokenBalance, setTokenBalance] = useState(0);
+  const [tokens] = useState([
+    { symbol: "ETH", address: null },
+    {
+      symbol: "ChainLink",
+      address: "0x779877A7B0D9E8603169DdbD7836e478b4624789",
+    },
+  ]);
 
   useEffect(() => {
     const setupProvider = async () => {
@@ -34,6 +44,30 @@ const TokenTransfer = () => {
     setupProvider();
   }, []);
 
+  const fetchTokenBalance = async () => {
+    if (!provider) return;
+
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+
+    if (token === "ETH") {
+      const balance = await provider.getBalance(address);
+      setTokenBalance(ethers.utils.formatEther(balance));
+    } else {
+      const tokenContract = new ethers.Contract(
+        tokens.find((t) => t.symbol === token).address,
+        ERC20_ABI,
+        signer
+      );
+      const balance = await tokenContract.balanceOf(address);
+      setTokenBalance(ethers.utils.formatUnits(balance, 18));
+    }
+  };
+
+  useEffect(() => {
+    fetchTokenBalance();
+  }, [token, provider]);
+
   const handleTransfer = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -47,22 +81,46 @@ const TokenTransfer = () => {
 
     try {
       const signer = provider.getSigner();
-      const tx = {
-        to: recipientAddress,
-        value: ethers.utils.parseEther(amount),
-      };
-      const transaction = await signer.sendTransaction(tx);
-      const receipt = await transaction.wait();
 
-      setTransactionDetails({
-        hash: transaction.hash,
-        from: transaction.from,
-        to: transaction.to,
-        value: ethers.utils.formatEther(transaction.value),
-        gasUsed: receipt.gasUsed.toString(),
-        gasPrice: ethers.utils.formatUnits(receipt.effectiveGasPrice, "gwei"),
-        blockNumber: receipt.blockNumber,
-      });
+      if (token === "ETH") {
+        const tx = {
+          to: recipientAddress,
+          value: ethers.utils.parseEther(amount),
+        };
+        const transaction = await signer.sendTransaction(tx);
+        const receipt = await transaction.wait();
+        setTransactionDetails({
+          hash: transaction.hash,
+          from: transaction.from,
+          to: transaction.to,
+          value: ethers.utils.formatEther(transaction.value),
+          gasUsed: receipt.gasUsed.toString(),
+          gasPrice: ethers.utils.formatUnits(receipt.effectiveGasPrice, "gwei"),
+          blockNumber: receipt.blockNumber,
+        });
+      } else {
+        const tokenContract = new ethers.Contract(
+          tokens.find((t) => t.symbol === token).address,
+          ERC20_ABI,
+          signer
+        );
+
+        const transaction = await tokenContract.transfer(
+          recipientAddress,
+          ethers.utils.parseUnits(amount, 18)
+        );
+
+        const receipt = await transaction.wait();
+        setTransactionDetails({
+          hash: transaction.hash,
+          from: transaction.from,
+          to: recipientAddress,
+          value: amount,
+          gasUsed: receipt.gasUsed.toString(),
+          gasPrice: ethers.utils.formatUnits(receipt.effectiveGasPrice, "gwei"),
+          blockNumber: receipt.blockNumber,
+        });
+      }
       setModalIsOpen(true);
       setRecipientAddress("");
       setAmount("");
@@ -80,6 +138,26 @@ const TokenTransfer = () => {
       <h2>Token Transfer</h2>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleTransfer}>
+        <div className="form-group token-dropdown">
+          <label htmlFor="token">Select Token</label>
+          <select
+            id="token"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+          >
+            {tokens.map((token) => (
+              <option key={token.symbol} value={token.symbol}>
+                {token.symbol}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="balance-display">
+          <p>
+            Balance: {tokenBalance} {token}
+          </p>
+        </div>
         <div className="form-group">
           <label htmlFor="recipient">Recipient Address</label>
           <input
@@ -96,7 +174,7 @@ const TokenTransfer = () => {
           <input
             type="text"
             id="amount"
-            placeholder="Amount in ETH"
+            placeholder="Amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
@@ -126,7 +204,7 @@ const TokenTransfer = () => {
               <strong>To:</strong> {transactionDetails.to}
             </p>
             <p>
-              <strong>Value:</strong> {transactionDetails.value} ETH
+              <strong>Value:</strong> {transactionDetails.value} {token}
             </p>
             <p>
               <strong>Gas Price:</strong> {transactionDetails.gasPrice} GWEI
