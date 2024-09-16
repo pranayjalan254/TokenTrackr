@@ -5,6 +5,7 @@ import CheckAllowance from "./CheckAllowance";
 import ApproveTokens from "./ApproveTokens";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
+import { popularTokens } from "../../../PopularTokens.js";
 
 const TokenAllowance = () => {
   const [tokenAddress, setTokenAddress] = useState("");
@@ -16,6 +17,10 @@ const TokenAllowance = () => {
   const [mode, setMode] = useState("check");
   const [provider, setProvider] = useState(null);
   const [isApproving, setIsApproving] = useState(false);
+  const [customToken, setCustomToken] = useState("");
+  const [selectedToken, setSelectedToken] = useState("");
+
+  const tokens = [{ symbol: "ETH", address: null }, ...popularTokens];
 
   useEffect(() => {
     const setupProvider = async () => {
@@ -32,6 +37,12 @@ const TokenAllowance = () => {
 
     setupProvider();
   }, []);
+
+  useEffect(() => {
+    if (selectedToken) {
+      setTokenAddress(selectedToken);
+    }
+  }, [selectedToken]);
 
   const checkAllowance = async () => {
     if (!tokenAddress || !contractAddress) {
@@ -70,7 +81,6 @@ const TokenAllowance = () => {
       const signer = provider.getSigner();
       const ownerAddress = await signer.getAddress();
 
-      // Check token balance
       const balance = await contract.balanceOf(ownerAddress);
       const formattedBalance = ethers.utils.formatUnits(balance, 18);
       if (parseFloat(formattedBalance) < parseFloat(approvalAmount)) {
@@ -78,7 +88,7 @@ const TokenAllowance = () => {
         return;
       }
 
-      setIsApproving(true); // Disable button and show "Approving..."
+      setIsApproving(true);
       const tx = await contract
         .connect(signer)
         .approve(contractAddress, ethers.utils.parseUnits(approvalAmount, 18));
@@ -92,8 +102,12 @@ const TokenAllowance = () => {
       );
       setSuccess("");
     } finally {
-      setIsApproving(false); // Enable button again after process
+      setIsApproving(false);
     }
+  };
+
+  const handleTokenSelect = (address) => {
+    setSelectedToken(address);
   };
 
   return (
@@ -113,6 +127,24 @@ const TokenAllowance = () => {
         >
           Approve Allowance
         </button>
+      </div>
+
+      <div className="popular-tokens">
+        {tokens
+          .filter((t) => t.symbol !== "ETH")
+          .map((tokenItem) => (
+            <button
+              key={tokenItem.symbol}
+              className="token-button"
+              onClick={() => handleTokenSelect(tokenItem.address)}
+            >
+              <img
+                src={tokenItem.logo}
+                alt={tokenItem.symbol}
+                className="token-logo"
+              />
+            </button>
+          ))}
       </div>
 
       {mode === "check" && (
