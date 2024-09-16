@@ -114,3 +114,12 @@
     min-height: 200px;
   }
 }
+
+.wallet-address {
+  padding-top: 20px;
+}
+
+.prices {
+  padding-top: 10px;
+  font-size: medium;
+}
