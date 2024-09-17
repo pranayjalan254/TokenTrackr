@@ -4,7 +4,7 @@ import "./WatchList.css";
 import { MdRemoveCircle } from "react-icons/md";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
-import { popularTokens } from "../../../PopularTokens.js";
+import { popularTokens } from "../../PopularTokens.js";
 
 const WatchList = () => {
   const [tokens, setTokens] = useState(() => {

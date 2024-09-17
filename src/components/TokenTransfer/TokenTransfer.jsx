@@ -4,7 +4,7 @@ import Modal from "react-modal";
 import "./TokenTransfer.css";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
-import { popularTokens } from "../../../PopularTokens.js";
+import { popularTokens } from "../../PopularTokens.js";
 
 const TokenTransfer = () => {
   const [recipientAddress, setRecipientAddress] = useState("");
@@ -208,7 +208,7 @@ const TokenTransfer = () => {
         </button>
       </div>
       <div className="balance-display">
-        <p>Currently Selected Token: {tokenName}</p>
+        <p>Currently Selected: {tokenName}</p>
       </div>
       <div className="balance-display">
         <p>

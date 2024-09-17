@@ -5,7 +5,7 @@ import CheckAllowance from "./CheckAllowance";
 import ApproveTokens from "./ApproveTokens";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
-import { popularTokens } from "../../../PopularTokens.js";
+import { popularTokens } from "../../PopularTokens.js";
 
 const TokenAllowance = () => {
   const [tokenAddress, setTokenAddress] = useState("");
@@ -17,7 +17,6 @@ const TokenAllowance = () => {
   const [mode, setMode] = useState("check");
   const [provider, setProvider] = useState(null);
   const [isApproving, setIsApproving] = useState(false);
-  const [customToken, setCustomToken] = useState("");
   const [selectedToken, setSelectedToken] = useState("");
 
   const tokens = [{ symbol: "ETH", address: null }, ...popularTokens];
