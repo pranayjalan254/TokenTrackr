@@ -6,6 +6,7 @@ import ApproveTokens from "./ApproveTokens";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
 import { popularTokens } from "../../PopularTokens.js";
+import { chainConfig } from "../SignUp/signup";
 
 const TokenAllowance = () => {
   const [tokenAddress, setTokenAddress] = useState("");
@@ -15,7 +16,7 @@ const TokenAllowance = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [mode, setMode] = useState("check");
-  const [provider, setProvider] = useState(null);
+  let [provider, setProvider] = useState(null);
   const [isApproving, setIsApproving] = useState(false);
   const [selectedToken, setSelectedToken] = useState("");
 
@@ -23,17 +24,29 @@ const TokenAllowance = () => {
 
   useEffect(() => {
     const setupProvider = async () => {
-      if (web3auth.connected) {
-        const web3authProvider = await web3auth.connect();
-        setProvider(new ethers.providers.Web3Provider(web3authProvider));
-      } else if (window.ethereum) {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        setProvider(new ethers.providers.Web3Provider(window.ethereum));
-      } else {
-        setError("No wallet provider found. Please connect a wallet.");
+      let address = localStorage.getItem("walletAddress");
+      if (address) {
+        provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
+        setProvider(provider);
+      }
+
+      if (!address) {
+        try {
+          if (web3auth.connected) {
+            const web3authProvider = await web3auth.connect();
+            setProvider(new ethers.providers.Web3Provider(web3authProvider));
+          } else if (window.ethereum) {
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            setProvider(new ethers.providers.Web3Provider(window.ethereum));
+          } else {
+            setError("No wallet provider found. Please connect a wallet.");
+          }
+        } catch (err) {
+          setError("Error connecting to wallet. Please try again.");
+          console.error("Provider setup error:", err);
+        }
       }
     };
-
     setupProvider();
   }, []);
 
@@ -51,8 +64,15 @@ const TokenAllowance = () => {
 
     try {
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
-      const signer = provider.getSigner();
-      const ownerAddress = await signer.getAddress();
+      let address = localStorage.getItem("walletAddress");
+      let ownerAddress;
+      if (address) {
+        ownerAddress = address;
+      }
+      if (!address) {
+        const signer = provider.getSigner();
+        ownerAddress = await signer.getAddress();
+      }
       const allowanceAmount = await contract.allowance(
         ownerAddress,
         contractAddress
@@ -79,14 +99,12 @@ const TokenAllowance = () => {
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
       const signer = provider.getSigner();
       const ownerAddress = await signer.getAddress();
-
       const balance = await contract.balanceOf(ownerAddress);
       const formattedBalance = ethers.utils.formatUnits(balance, 18);
       if (parseFloat(formattedBalance) < parseFloat(approvalAmount)) {
         setError("Insufficient token balance for approval.");
         return;
       }
-
       setIsApproving(true);
       const tx = await contract
         .connect(signer)
@@ -97,7 +115,7 @@ const TokenAllowance = () => {
       setAllowance(null);
     } catch (err) {
       setError(
-        "Error approving tokens. Please check the details and try again."
+        "Error approving tokens. Connect to a wallet or try again later"
       );
       setSuccess("");
     } finally {

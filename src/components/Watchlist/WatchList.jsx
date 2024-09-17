@@ -5,6 +5,7 @@ import { MdRemoveCircle } from "react-icons/md";
 import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
 import { popularTokens } from "../../PopularTokens.js";
+import { chainConfig } from "../SignUp/signup";
 
 const WatchList = () => {
   const [tokens, setTokens] = useState(() => {
@@ -13,27 +14,34 @@ const WatchList = () => {
   });
   const [newToken, setNewToken] = useState("");
   const [tokenData, setTokenData] = useState({});
-  const [provider, setProvider] = useState(null);
+  let [provider, setProvider] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const setupProvider = async () => {
-      try {
-        if (web3auth.connected) {
-          const web3authProvider = await web3auth.connect();
-          setProvider(new ethers.providers.Web3Provider(web3authProvider));
-        } else if (window.ethereum) {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          setProvider(new ethers.providers.Web3Provider(window.ethereum));
-        } else {
-          setError("No wallet provider found. Please connect a wallet.");
+      let address = localStorage.getItem("walletAddress");
+      if (address) {
+        provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
+        setProvider(provider);
+      }
+
+      if (!address) {
+        try {
+          if (web3auth.connected) {
+            const web3authProvider = await web3auth.connect();
+            setProvider(new ethers.providers.Web3Provider(web3authProvider));
+          } else if (window.ethereum) {
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            setProvider(new ethers.providers.Web3Provider(window.ethereum));
+          } else {
+            setError("No wallet provider found. Please connect a wallet.");
+          }
+        } catch (err) {
+          setError("Error connecting to wallet. Please try again.");
+          console.error("Provider setup error:", err);
         }
-      } catch (err) {
-        setError("Error connecting to wallet. Please try again.");
-        console.error("Provider setup error:", err);
       }
     };
-
     setupProvider();
   }, []);
 
@@ -42,11 +50,17 @@ const WatchList = () => {
       if (!provider) {
         throw new Error("Provider not initialized");
       }
-
       const contract = new ethers.Contract(token, ERC20_ABI, provider);
       const name = await contract.name();
-      const signer = provider.getSigner();
-      const userAddress = await signer.getAddress();
+      let address = localStorage.getItem("walletAddress");
+      let userAddress;
+      if (address) {
+        userAddress = address;
+      }
+      if (!address) {
+        const signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+      }
       const balance = await contract.balanceOf(userAddress);
       return { name, balance: ethers.utils.formatEther(balance) };
     } catch (error) {
@@ -94,8 +108,7 @@ const WatchList = () => {
 
   useEffect(() => {
     const fetchTokenData = async () => {
-      if (!provider) return; // Ensure provider is available
-
+      if (!provider) return;
       const newTokenData = {};
       for (const token of tokens) {
         const result = await validateToken(token);
@@ -112,7 +125,7 @@ const WatchList = () => {
     };
 
     fetchTokenData();
-  }, [tokens, provider]); // Include provider in dependency array
+  }, [tokens, provider]);
 
   return (
     <div className="watchlist-container">

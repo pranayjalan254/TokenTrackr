@@ -17,6 +17,7 @@ import { web3auth } from "../SignUp/signup";
 import { ERC20_ABI } from "../../../ERC20_ABI.js";
 import { popularTokens } from "../../PopularTokens.js";
 import "./HistoricalData.css";
+import { chainConfig } from "../SignUp/signup";
 
 ChartJS.register(
   CategoryScale,
@@ -39,39 +40,47 @@ const averageBlockTime = 13;
 const HistoricalDataChart = () => {
   const [historicalData, setHistoricalData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [provider, setProvider] = useState(null);
-  const [walletAddress, setWalletAddress] = useState(null);
+  let [provider, setProvider] = useState(null);
+  let [walletAddress, setWalletAddress] = useState(null);
   const [selectedToken, setSelectedToken] = useState(popularTokens[0].address);
   const [customToken, setCustomToken] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     const setupProvider = async () => {
-      try {
-        if (web3auth && web3auth.connected) {
-          const web3authProvider = await web3auth.connect();
-          const ethersProvider = new ethers.providers.Web3Provider(
-            web3authProvider
-          );
-          setProvider(ethersProvider);
-          const signer = ethersProvider.getSigner();
-          const address = await signer.getAddress();
-          setWalletAddress(address);
-        } else if (window.ethereum) {
-          await window.ethereum.request({ method: "eth_requestAccounts" });
-          const ethersProvider = new ethers.providers.Web3Provider(
-            window.ethereum
-          );
-          setProvider(ethersProvider);
-          const signer = ethersProvider.getSigner();
-          const address = await signer.getAddress();
-          setWalletAddress(address);
-        } else {
-          setError("No wallet provider found. Please connect a wallet.");
+      let address = localStorage.getItem("walletAddress");
+      if (address) {
+        provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
+        setProvider(provider);
+        setWalletAddress(address);
+      }
+      if (!address) {
+        try {
+          if (web3auth && web3auth.connected) {
+            const web3authProvider = await web3auth.connect();
+            const ethersProvider = new ethers.providers.Web3Provider(
+              web3authProvider
+            );
+            setProvider(ethersProvider);
+            const signer = ethersProvider.getSigner();
+            const address = await signer.getAddress();
+            setWalletAddress(address);
+          } else if (window.ethereum) {
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            const ethersProvider = new ethers.providers.Web3Provider(
+              window.ethereum
+            );
+            setProvider(ethersProvider);
+            const signer = ethersProvider.getSigner();
+            const address = await signer.getAddress();
+            setWalletAddress(address);
+          } else {
+            setError("No wallet provider found. Please connect a wallet.");
+          }
+        } catch (err) {
+          setError("Error connecting to wallet. Please try again.");
+          console.error("Provider setup error:", err);
         }
-      } catch (err) {
-        setError("Error connecting to wallet. Please try again.");
-        console.error("Provider setup error:", err);
       }
     };
 

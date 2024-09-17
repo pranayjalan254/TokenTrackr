@@ -2,7 +2,6 @@ import { CHAIN_NAMESPACES, IProvider, WEB3AUTH_NETWORK } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import { Web3Auth } from "@web3auth/modal";
-import { ethers } from "../../../ethers-5.6.esm.min.js";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../AuthContext.jsx";
@@ -15,6 +14,7 @@ declare global {
 }
 const clientId = import.meta.env.VITE_CLIENT_ID ?? "";
 
+// chain config for mainnet ethereum
 // export const chainConfig = {
 //   chainNamespace: CHAIN_NAMESPACES.EIP155,
 //   chainId: "0x1",
@@ -76,37 +76,30 @@ function Login() {
   }, [navigate]);
 
   const handleWeb3AuthLogin = async () => {
+    setLoading(true);
     try {
       const web3authProvider = await web3auth.connect();
       setProvider(web3authProvider);
-      const ethersProvider = new ethers.providers.Web3Provider(
-        web3authProvider
-      );
-      const signer = ethersProvider.getSigner();
-      const address = await signer.getAddress();
-      console.log("Wallet Address:", address);
-      const balance = await ethersProvider.getBalance(address);
-      console.log("Wallet Balance:", ethers.utils.formatEther(balance));
       login();
       navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleMetaMaskLogin = async () => {
+    setLoading(true);
     if (window.ethereum !== undefined) {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const address = await signer.getAddress();
-        console.log("Wallet Address:", address);
-        const balance = await provider.getBalance(address);
-        console.log("Wallet Balance:", ethers.utils.formatEther(balance));
         login();
         navigate("/dashboard");
       } catch (error) {
         console.error("MetaMask login failed:", error);
+      } finally {
+        setLoading(false);
       }
     } else {
       console.error("MetaMask not detected. Please install MetaMask.");
@@ -120,16 +113,9 @@ function Login() {
     }
     try {
       if (!walletAddress) return;
-
-      const ethersProvider = new ethers.providers.JsonRpcProvider(
-        chainConfig.rpcTarget
-      );
-
-      const balance = await ethersProvider.getBalance(walletAddress);
-      console.log("Wallet Address:", walletAddress);
-
-      console.log("Balance:", ethers.utils.formatEther(balance));
+      localStorage.setItem("walletAddress", walletAddress);
       login();
+      navigate("/dashboard");
     } catch (error) {
       console.error("Invalid address or connection failed:", error);
     }
