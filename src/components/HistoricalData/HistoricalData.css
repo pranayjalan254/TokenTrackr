@@ -71,3 +71,79 @@
   display: flex;
   padding: 20px;
 }
+
+@media (max-width: 768px) {
+  .chart-container {
+    width: 90%;
+    margin: auto;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .date-picker-container,
+  .token-logo-container {
+    width: 100%;
+    text-align: left;
+  }
+
+  .token-logo-container {
+    text-align: left;
+    margin-top: 10px;
+  }
+
+  .token-selection {
+    justify-content: flex-start;
+  }
+
+  .token-logo {
+    width: 40px;
+    height: 40px;
+    margin: 10px 5px;
+  }
+
+  .custom-token-input {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    width: 95%;
+    margin: auto;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .date-picker-container,
+  .token-logo-container {
+    width: 100%;
+    text-align: left;
+  }
+
+  .token-selection {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .token-logo {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+  }
+
+  .custom-token-input {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .loading {
+    font-size: 14px;
+  }
+}

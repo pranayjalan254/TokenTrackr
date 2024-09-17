@@ -11,6 +11,7 @@
   padding: 20px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .dashboard-header h1 {
@@ -39,6 +40,7 @@
   cursor: pointer;
   padding: 5px 10px;
 }
+
 .dashboard-header nav ul li button {
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   border: none;
@@ -51,6 +53,9 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }
 
 .dashboard-header nav ul li a:hover,
@@ -74,6 +79,7 @@
   min-height: 300px;
   overflow-y: auto;
 }
+
 .dashboard-summary {
   background: #162328;
   border-radius: 10px;
@@ -81,11 +87,12 @@
   min-height: 300px;
   overflow-y: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
+
 .dashboard-summary button {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
   border: none;
   border-radius: 8px;
@@ -93,7 +100,6 @@
   font-size: 16px;
   font-weight: bold;
   padding: 12px 24px;
-  width: 90%;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -104,22 +110,125 @@
   padding-top: 10px;
 }
 
+.prices {
+  padding-top: 10px;
+  font-size: medium;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-main {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .dashboard-header nav ul li {
+    margin: 5px;
+  }
+
+  .dashboard-header nav ul li a {
+    font-size: 1rem;
+  }
+
+  .dashboard-header nav ul li button {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-main {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .dashboard-summary,
   .dashboard-content {
     min-height: 200px;
+    padding: 10px;
+  }
+
+  .dashboard-header nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dashboard-header nav ul li {
+    margin: 10px 0;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .dashboard-summary button {
+    display: none;
+  }
+
+  .gas-prices {
+    display: none;
   }
 }
 
-.wallet-address {
-  padding-top: 20px;
-}
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 1rem;
+  }
 
-.prices {
-  padding-top: 10px;
-  font-size: medium;
+  .dashboard-header nav ul li a {
+    font-size: 0.9rem;
+  }
+
+  .dashboard-header nav ul li button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+
+  .dashboard-main {
+    padding: 10px;
+  }
+
+  .dashboard-summary,
+  .dashboard-content {
+    padding: 10px;
+  }
+
+  .wallet-address {
+    font-size: 14px;
+  }
+
+  .prices {
+    font-size: 14px;
+  }
 }

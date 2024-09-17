@@ -83,7 +83,14 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>TokenTrackr</h1>
+        <div className="dash-header">
+          <div className="header">
+            <h1>TokenTrackr</h1>
+          </div>
+          <div>
+            <button onClick={handleLogout}>Logout</button>
+          </div>
+        </div>
         <nav>
           <ul>
             <li>
@@ -114,16 +121,18 @@ const Dashboard = () => {
             <strong>Current Network:</strong> {network}
           </p>{" "}
           <div className="wallet-address">
-            <h4>Current Gas Prices (Gwei)</h4>
-            <p className="prices">
-              <strong>Low:</strong> {gasPrices.low} Gwei
-            </p>
-            <p className="prices">
-              <strong>Medium:</strong> {gasPrices.medium} Gwei
-            </p>
-            <p className="prices">
-              <strong>High:</strong> {gasPrices.high} Gwei
-            </p>
+            <div className="gas-prices">
+              <h4>Current Gas Prices (Gwei)</h4>
+              <p className="prices">
+                <strong>Low:</strong> {gasPrices.low} Gwei
+              </p>
+              <p className="prices">
+                <strong>Medium:</strong> {gasPrices.medium} Gwei
+              </p>
+              <p className="prices">
+                <strong>High:</strong> {gasPrices.high} Gwei
+              </p>
+            </div>
           </div>
           <button onClick={handleLogout}>Logout</button>
         </section>
