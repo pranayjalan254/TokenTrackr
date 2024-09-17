@@ -11,9 +11,12 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import DatePickerComponent from "./DatePickerComponent/DatePicker";
 import { ethers } from "../../../ethers-5.6.esm.min.js";
+import DatePickerComponent from "./DatePicker.jsx";
 import { web3auth } from "../SignUp/signup";
+import { ERC20_ABI } from "../../../ERC20_ABI.js";
+import { popularTokens } from "../../PopularTokens.js";
+import "./HistoricalData.css";
 
 ChartJS.register(
   CategoryScale,
@@ -31,7 +34,6 @@ const config = {
 };
 
 const alchemy = new Alchemy(config);
-
 const averageBlockTime = 13;
 
 const HistoricalDataChart = () => {
@@ -39,6 +41,8 @@ const HistoricalDataChart = () => {
   const [loading, setLoading] = useState(false);
   const [provider, setProvider] = useState(null);
   const [walletAddress, setWalletAddress] = useState(null);
+  const [selectedToken, setSelectedToken] = useState(popularTokens[0].address);
+  const [customToken, setCustomToken] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -86,14 +90,23 @@ const HistoricalDataChart = () => {
     return estimatedBlock;
   };
 
-  const getBalanceForDate = async (date) => {
+  const getBalanceForDate = async (date, tokenAddress) => {
     if (!walletAddress) return 0;
     const startingBlockNumber = await getStartingBlockForDay(date);
-    const balance = await alchemy.core.getBalance(
-      walletAddress,
-      startingBlockNumber
-    );
-    return Utils.formatEther(balance);
+
+    if (!tokenAddress) {
+      const balance = await alchemy.core.getBalance(
+        walletAddress,
+        startingBlockNumber
+      );
+      return Utils.formatEther(balance);
+    } else {
+      const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
+      const balance = await contract.balanceOf(walletAddress, {
+        blockTag: startingBlockNumber,
+      });
+      return Utils.formatUnits(balance, 18);
+    }
   };
 
   const fetchHistoricalData = useCallback(
@@ -102,7 +115,10 @@ const HistoricalDataChart = () => {
       const currentDate = new Date(startDate);
 
       while (currentDate <= endDate) {
-        const balance = await getBalanceForDate(currentDate);
+        const balance = await getBalanceForDate(
+          currentDate,
+          customToken || selectedToken
+        );
         data.push({
           date: new Date(currentDate).toISOString().split("T")[0],
           balance: parseFloat(balance),
@@ -112,7 +128,7 @@ const HistoricalDataChart = () => {
 
       return data;
     },
-    [walletAddress]
+    [walletAddress, selectedToken, customToken]
   );
 
   const handleDateRangeChange = async (startDate, endDate) => {
@@ -132,11 +148,21 @@ const HistoricalDataChart = () => {
     }
   };
 
+  const handleTokenClick = (address) => {
+    setCustomToken("");
+    setSelectedToken(address);
+  };
+
+  const handleCustomTokenChange = (e) => {
+    setSelectedToken("");
+    setCustomToken(e.target.value);
+  };
+
   const data = {
     labels: historicalData.map((dataPoint) => dataPoint.date),
     datasets: [
       {
-        label: "Sepolia ETH Balance",
+        label: "Token Balance",
         data: historicalData.map((dataPoint) => dataPoint.balance),
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
@@ -158,11 +184,43 @@ const HistoricalDataChart = () => {
   };
 
   return (
-    <div>
-      <h2>Sepolia ETH Balance History</h2>
-      <DatePickerComponent onDateRangeChange={handleDateRangeChange} />
-      {loading ? <p>Loading...</p> : <Line data={data} options={options} />}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className="chart-container">
+      <h2>Token Balance History</h2>
+      <div className="chart-header">
+        <div className="date-picker-container">
+          <DatePickerComponent onDateRangeChange={handleDateRangeChange} />
+        </div>
+        <div className="token-logo-container">
+          <div className="token-selection">
+            {popularTokens.map((token) => (
+              <img
+                key={token.address}
+                src={token.logo}
+                alt={token.symbol}
+                className={`token-logo ${
+                  selectedToken === token.address ? "selected" : ""
+                }`}
+                onClick={() => handleTokenClick(token.address)}
+              />
+            ))}
+          </div>
+          <input
+            type="text"
+            placeholder="Enter custom token address"
+            value={customToken}
+            onChange={handleCustomTokenChange}
+            className="custom-token-input"
+          />
+        </div>
+      </div>
+      <div className="graph-section">
+        {loading ? (
+          <p className="loading">Loading...</p>
+        ) : (
+          <Line data={data} options={options} />
+        )}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </div>
     </div>
   );
 };

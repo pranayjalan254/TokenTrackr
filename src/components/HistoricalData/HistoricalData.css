@@ -1,0 +1,73 @@
+.chart-container {
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.date-picker-container {
+  width: 50%;
+  display: inline-block;
+  text-align: left;
+}
+
+.token-logo-container {
+  width: 50%;
+  display: inline-block;
+  text-align: right;
+}
+
+.token-selection {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.token-logo {
+  width: 50px;
+  height: 50px;
+  margin: 20px 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.token-logo:hover {
+  transform: scale(1.1);
+}
+
+.selected {
+  border: 2px solid #4bc0c0;
+  border-radius: 50%;
+}
+
+.custom-token-input {
+  padding: 10px;
+  width: 350px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  display: block;
+  margin-left: 0px;
+}
+
+.loading {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.graph-section {
+  margin-top: 20px;
+}
+
+.date-picker-container {
+  display: flex;
+  padding: 20px;
+}
