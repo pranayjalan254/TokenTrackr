@@ -9,28 +9,30 @@ import { popularTokens } from "../../PopularTokens.js";
 import { chainConfig } from "../SignUp/signup";
 
 const TokenAllowance = () => {
-  const [tokenAddress, setTokenAddress] = useState("");
-  const [contractAddress, setContractAddress] = useState("");
-  const [allowance, setAllowance] = useState(null);
-  const [approvalAmount, setApprovalAmount] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [mode, setMode] = useState("check");
-  let [provider, setProvider] = useState(null);
-  const [isApproving, setIsApproving] = useState(false);
-  const [selectedToken, setSelectedToken] = useState("");
+  const [tokenAddress, setTokenAddress] = useState(""); // Address of the token to check/approve
+  const [contractAddress, setContractAddress] = useState(""); // Address of the contract to check/approve allowance
+  const [allowance, setAllowance] = useState(null); // Token allowance
+  const [approvalAmount, setApprovalAmount] = useState(""); // Amount of tokens to approve
+  const [error, setError] = useState(""); // Error message
+  const [success, setSuccess] = useState(""); // Success message
+  const [mode, setMode] = useState("check"); // Mode: "check" or "approve"
+  const [provider, setProvider] = useState(null); // Ethereum provider
+  const [isApproving, setIsApproving] = useState(false); // Approval state
+  const [selectedToken, setSelectedToken] = useState(""); // Currently selected token
 
+  // List of popular tokens including ETH
   const tokens = [{ symbol: "ETH", address: null }, ...popularTokens];
 
+  // Initialize Ethereum provider
   useEffect(() => {
     const setupProvider = async () => {
       let address = localStorage.getItem("walletAddress");
-      if (address) {
-        provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
-        setProvider(provider);
-      }
 
-      if (!address) {
+      if (address) {
+        setProvider(
+          new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget)
+        );
+      } else {
         try {
           if (web3auth.connected) {
             const web3authProvider = await web3auth.connect();
@@ -50,12 +52,14 @@ const TokenAllowance = () => {
     setupProvider();
   }, []);
 
+  // Update token address when a new token is selected
   useEffect(() => {
     if (selectedToken) {
       setTokenAddress(selectedToken);
     }
   }, [selectedToken]);
 
+  // Check token allowance for the specified contract
   const checkAllowance = async () => {
     if (!tokenAddress || !contractAddress) {
       setError("Please provide both token address and contract address.");
@@ -65,16 +69,14 @@ const TokenAllowance = () => {
     try {
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
       let address = localStorage.getItem("walletAddress");
-      let ownerAddress;
-      if (address) {
-        ownerAddress = address;
-      }
+
       if (!address) {
         const signer = provider.getSigner();
-        ownerAddress = await signer.getAddress();
+        address = await signer.getAddress();
       }
+
       const allowanceAmount = await contract.allowance(
-        ownerAddress,
+        address,
         contractAddress
       );
       setAllowance(ethers.utils.formatEther(allowanceAmount));
@@ -87,6 +89,7 @@ const TokenAllowance = () => {
     }
   };
 
+  // Approve tokens for the specified contract
   const approveTokens = async () => {
     if (!tokenAddress || !contractAddress || !approvalAmount) {
       setError(
@@ -102,21 +105,26 @@ const TokenAllowance = () => {
       const balance = await contract.balanceOf(ownerAddress);
       const decimals = await contract.decimals();
       const formattedBalance = ethers.utils.formatUnits(balance, decimals);
+
       if (parseFloat(formattedBalance) < parseFloat(approvalAmount)) {
         setError("Insufficient token balance for approval.");
         return;
       }
+
       setIsApproving(true);
       const tx = await contract
         .connect(signer)
-        .approve(contractAddress, ethers.utils.parseUnits(approvalAmount, 18));
+        .approve(
+          contractAddress,
+          ethers.utils.parseUnits(approvalAmount, decimals)
+        );
       await tx.wait();
       setSuccess("Approval successful!");
       setError("");
       setAllowance(null);
     } catch (err) {
       setError(
-        "Error approving tokens. Connect to a wallet or try again later"
+        "Error approving tokens. Connect to a wallet or try again later."
       );
       setSuccess("");
     } finally {
@@ -124,6 +132,7 @@ const TokenAllowance = () => {
     }
   };
 
+  // Handle token selection from the popular tokens list
   const handleTokenSelect = (address) => {
     setSelectedToken(address);
   };
@@ -152,6 +161,7 @@ const TokenAllowance = () => {
           .filter((t) => t.symbol !== "ETH")
           .map((tokenItem) => (
             <img
+              key={tokenItem.symbol}
               src={tokenItem.logo}
               alt={tokenItem.symbol}
               className="token-logo"

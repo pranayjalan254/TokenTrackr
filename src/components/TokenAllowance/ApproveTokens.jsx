@@ -10,6 +10,7 @@ const ApproveTokens = ({
   error,
   isApproving,
 }) => {
+  // Handler function for the approve button click
   const handleApprove = async () => {
     try {
       await approveTokens();
@@ -30,7 +31,6 @@ const ApproveTokens = ({
           placeholder="Enter token address"
         />
       </div>
-
       <div className="form-group">
         <label htmlFor="contract-address">Contract Address</label>
         <input
@@ -41,7 +41,6 @@ const ApproveTokens = ({
           placeholder="Enter contract address"
         />
       </div>
-
       <div className="form-group">
         <label htmlFor="approval-amount">Amount to Approve</label>
         <input
@@ -52,11 +51,9 @@ const ApproveTokens = ({
           placeholder="Enter amount to approve"
         />
       </div>
-
       <button onClick={handleApprove} disabled={isApproving}>
         {isApproving ? "Approving..." : "Approve"}
       </button>
-
       {success && <p className="success-message">{success}</p>}
       {error && <p className="error-message">{error}</p>}
     </>

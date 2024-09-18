@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "../../../ethers-5.6.esm.min.js";
 import "./Dashboard.css";
 import { chainConfig } from "../SignUp/signup";
+
 let provider;
 
 const Dashboard = () => {
@@ -15,6 +16,7 @@ const Dashboard = () => {
   const [gasPrices, setGasPrices] = useState({ low: 0, medium: 0, high: 0 });
   const [isWeb3Auth, setIsWeb3Auth] = useState(false);
 
+  // Function to get network name based on chain ID
   const getNetworkName = (chainId) => {
     switch (chainId) {
       case 1:
@@ -30,6 +32,7 @@ const Dashboard = () => {
     }
   };
 
+  // Fetch gas prices and set the state
   const fetchGasPrices = async () => {
     if (!provider) return;
     try {
@@ -45,12 +48,13 @@ const Dashboard = () => {
     }
   };
 
+  // Fetch wallet information and initialize provider
   useEffect(() => {
     const fetchWalletInfo = async () => {
       let address = localStorage.getItem("walletAddress");
-      if (address)
+      if (address) {
         provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
-      if (!address) {
+      } else {
         if (web3auth.connected) {
           const web3authProvider = await web3auth.connect();
           provider = new ethers.providers.Web3Provider(web3authProvider);
@@ -62,16 +66,22 @@ const Dashboard = () => {
         const signer = provider.getSigner();
         address = await signer.getAddress();
       }
+
+      // Fetch and set wallet balance and network info
       const balance = await provider.getBalance(address);
       const networkInfo = await provider.getNetwork();
       setWalletAddress(address);
       setEthBalance(ethers.utils.formatEther(balance));
       setNetwork(getNetworkName(networkInfo.chainId));
+
+      // Fetch gas prices
       await fetchGasPrices();
     };
+
     fetchWalletInfo();
   }, []);
 
+  // Handle logout process
   const handleLogout = async () => {
     if (isWeb3Auth && web3auth.connected) {
       await web3auth.logout();
@@ -124,7 +134,7 @@ const Dashboard = () => {
           </p>
           <p className="wallet-address">
             <strong>Current Network:</strong> {network}
-          </p>{" "}
+          </p>
           <div className="wallet-address">
             <div className="gas-prices">
               <h4>Current Gas Prices (Gwei)</h4>
@@ -139,7 +149,6 @@ const Dashboard = () => {
               </p>
             </div>
           </div>
-          <button onClick={handleLogout}>Logout</button>
         </section>
         <section className="dashboard-content">
           <Outlet />

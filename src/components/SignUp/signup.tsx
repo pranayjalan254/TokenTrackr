@@ -12,44 +12,32 @@ declare global {
     ethereum?: any;
   }
 }
-const clientId = import.meta.env.VITE_CLIENT_ID ?? "";
 
-// chain config for mainnet ethereum
+// Define chain configuration for Ethereum Sepolia Testnet
 export const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
-  chainId: "0x1",
+  chainId: "0xaa36a7",
   rpcTarget:
-    "https://eth-mainnet.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
-  displayName: "Ethereum Mainnet",
-  blockExplorer: "https://etherscan.io/",
+    "https://eth-sepolia.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
+  displayName: "Ethereum Sepolia Testnet",
+  blockExplorer: "https://sepolia.etherscan.io/",
   ticker: "ETH",
-  tickerName: "Ether",
+  tickerName: "Sepolia Ether",
 };
 
-// export const chainConfig = {
-//   chainNamespace: CHAIN_NAMESPACES.EIP155,
-//   chainId: "0xaa36a7",
-//   rpcTarget:
-//     "https://eth-sepolia.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
-//   displayName: "Ethereum Sepolia Testnet",
-//   blockExplorer: "https://sepolia.etherscan.io/",
-//   ticker: "ETH",
-//   tickerName: "Sepolia Ether",
-// };
-
+// Initialize providers
 const privateKeyProvider = new EthereumPrivateKeyProvider({
   config: { chainConfig },
 });
-
 const metamaskAdapter = new MetamaskAdapter({
-  clientId,
+  clientId: import.meta.env.VITE_CLIENT_ID ?? "",
   sessionTime: 86400,
   web3AuthNetwork: "sapphire_devnet",
-  chainConfig: chainConfig,
+  chainConfig,
 });
 
 export const web3auth = new Web3Auth({
-  clientId,
+  clientId: import.meta.env.VITE_CLIENT_ID ?? "",
   web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
   privateKeyProvider,
 });
@@ -75,6 +63,7 @@ function Login() {
     init();
   }, [navigate]);
 
+  // Handle Web3Auth login
   const handleWeb3AuthLogin = async () => {
     setLoading(true);
     try {
@@ -89,9 +78,10 @@ function Login() {
     }
   };
 
+  // Handle MetaMask login
   const handleMetaMaskLogin = async () => {
     setLoading(true);
-    if (window.ethereum !== undefined) {
+    if (window.ethereum) {
       try {
         await window.ethereum.request({ method: "eth_requestAccounts" });
         login();
@@ -106,13 +96,13 @@ function Login() {
     }
   };
 
+  // Handle login using a manually entered wallet address
   const handleAddressInput = async () => {
     if (!walletAddress.trim()) {
       alert("Please enter a wallet address.");
       return;
     }
     try {
-      if (!walletAddress) return;
       localStorage.setItem("walletAddress", walletAddress);
       login();
       navigate("/dashboard");
@@ -134,7 +124,7 @@ function Login() {
             {loading ? "Connecting..." : "Login with Web3Auth"}
           </button>
           <button onClick={handleMetaMaskLogin} className="login-button">
-            {loading ? "Connecting..." : "Connect with Metamask"}
+            {loading ? "Connecting..." : "Connect with MetaMask"}
           </button>
           <div className="wallet-address-input">
             <input
@@ -150,7 +140,7 @@ function Login() {
         </div>
       </div>
       <div className="login-note">
-        <h3>Note: For full functionality login with web3auth or metamask</h3>
+        <h3>Note: For full functionality, login with Web3Auth or MetaMask</h3>
       </div>
     </div>
   );

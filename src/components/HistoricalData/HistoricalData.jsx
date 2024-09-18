@@ -19,6 +19,7 @@ import { popularTokens } from "../../PopularTokens.js";
 import "./HistoricalData.css";
 import { chainConfig } from "../SignUp/signup";
 
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -29,32 +30,34 @@ ChartJS.register(
   Legend
 );
 
+// Alchemy configuration
 const config = {
   apiKey: import.meta.env.VITE_API_KEY,
   network: Network.ETH_SEPOLIA,
 };
-
 const alchemy = new Alchemy(config);
-const averageBlockTime = 13;
+const averageBlockTime = 13; // Average block time in seconds
 
 const HistoricalDataChart = () => {
+  // State variables
   const [historicalData, setHistoricalData] = useState([]);
   const [loading, setLoading] = useState(false);
-  let [provider, setProvider] = useState(null);
-  let [walletAddress, setWalletAddress] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [walletAddress, setWalletAddress] = useState(null);
   const [selectedToken, setSelectedToken] = useState(popularTokens[0].address);
   const [customToken, setCustomToken] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Function to set up the provider and get the wallet address
     const setupProvider = async () => {
       let address = localStorage.getItem("walletAddress");
       if (address) {
-        provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
-        setProvider(provider);
+        setProvider(
+          new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget)
+        );
         setWalletAddress(address);
-      }
-      if (!address) {
+      } else {
         try {
           if (web3auth && web3auth.connected) {
             const web3authProvider = await web3auth.connect();
@@ -62,8 +65,7 @@ const HistoricalDataChart = () => {
               web3authProvider
             );
             setProvider(ethersProvider);
-            const signer = ethersProvider.getSigner();
-            const address = await signer.getAddress();
+            const address = await ethersProvider.getSigner().getAddress();
             setWalletAddress(address);
           } else if (window.ethereum) {
             await window.ethereum.request({ method: "eth_requestAccounts" });
@@ -71,8 +73,7 @@ const HistoricalDataChart = () => {
               window.ethereum
             );
             setProvider(ethersProvider);
-            const signer = ethersProvider.getSigner();
-            const address = await signer.getAddress();
+            const address = await ethersProvider.getSigner().getAddress();
             setWalletAddress(address);
           } else {
             setError("No wallet provider found. Please connect a wallet.");
@@ -87,6 +88,7 @@ const HistoricalDataChart = () => {
     setupProvider();
   }, [web3auth]);
 
+  // Function to get the starting block number for a given date
   const getStartingBlockForDay = async (date) => {
     const targetTimestamp = Math.floor(date.getTime() / 1000);
     const latestBlock = await alchemy.core.getBlockNumber();
@@ -95,31 +97,31 @@ const HistoricalDataChart = () => {
 
     const timeDifference = latestBlockTimestamp - targetTimestamp;
     const estimatedBlocksAgo = Math.floor(timeDifference / averageBlockTime);
-    const estimatedBlock = latestBlock - estimatedBlocksAgo;
-    return estimatedBlock;
+    return latestBlock - estimatedBlocksAgo;
   };
 
+  // Function to get the balance for a given date and token address
   const getBalanceForDate = async (date, tokenAddress) => {
     if (!walletAddress) return 0;
-    console.log(tokenAddress);
+
     const startingBlockNumber = await getStartingBlockForDay(date);
     if (!tokenAddress) {
       const balance = await alchemy.core.getBalance(
         walletAddress,
         startingBlockNumber
       );
-      return Utils.formatUnits(balance, decimals);
+      return Utils.formatUnits(balance);
     } else {
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
       const balance = await contract.balanceOf(walletAddress, {
         blockTag: startingBlockNumber,
       });
       const decimals = await contract.decimals();
-      console.log(Utils.formatUnits(balance, decimals));
       return Utils.formatUnits(balance, decimals);
     }
   };
 
+  // Fetch historical data based on the selected date range
   const fetchHistoricalData = useCallback(
     async (startDate, endDate) => {
       const data = [];
@@ -142,6 +144,7 @@ const HistoricalDataChart = () => {
     [walletAddress, selectedToken, customToken]
   );
 
+  // Handle date range change and fetch data
   const handleDateRangeChange = async (startDate, endDate) => {
     if (!startDate || !endDate) {
       console.error("Invalid date range.");
@@ -159,16 +162,19 @@ const HistoricalDataChart = () => {
     }
   };
 
+  // Handle popular token click
   const handleTokenClick = (address) => {
     setCustomToken("");
     setSelectedToken(address);
   };
 
+  // Handle custom token address change
   const handleCustomTokenChange = (e) => {
     setSelectedToken("");
     setCustomToken(e.target.value);
   };
 
+  // Chart data and options
   const data = {
     labels: historicalData.map((dataPoint) => dataPoint.date),
     datasets: [

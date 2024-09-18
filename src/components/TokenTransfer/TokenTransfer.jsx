@@ -8,58 +8,62 @@ import { popularTokens } from "../../PopularTokens.js";
 import { chainConfig } from "../SignUp/signup";
 
 const TokenTransfer = () => {
+  // State variables for managing form input, loading state, transaction details, etc.
   const [recipientAddress, setRecipientAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  let [provider, setProvider] = useState(null);
+  const [provider, setProvider] = useState(null);
   const [error, setError] = useState("");
   const [token, setToken] = useState("ETH");
-  const [tokenName, setTokenName] = useState("Eth");
+  const [tokenName, setTokenName] = useState("ETH");
   const [customToken, setCustomToken] = useState("");
   const [tokenBalance, setTokenBalance] = useState(0);
   const [resetButtonVisible, setResetButtonVisible] = useState(false);
 
+  // Array of supported tokens, including popular tokens
   const tokens = [
-    { symbol: "ETH", address: null, name: "Eth" },
+    { symbol: "ETH", address: null, name: "ETH" },
     ...popularTokens,
   ];
 
+  // Effect to set up the provider when the component mounts
   useEffect(() => {
     const setupProvider = async () => {
-      let address = localStorage.getItem("walletAddress");
-      if (address) {
-        let provider = new ethers.providers.JsonRpcProvider(
-          chainConfig.rpcTarget
-        );
-        setProvider(provider);
-      }
-      if (!address) {
-        try {
-          if (web3auth.connected) {
-            const web3authProvider = await web3auth.connect();
-            setProvider(new ethers.providers.Web3Provider(web3authProvider));
-          } else if (window.ethereum) {
-            await window.ethereum.request({ method: "eth_requestAccounts" });
-            setProvider(new ethers.providers.Web3Provider(window.ethereum));
-          } else {
-            setError("No wallet provider found. Please connect a wallet.");
-          }
-        } catch (err) {
-          setError("Error connecting to wallet. Please try again.");
-          console.error("Provider setup error:", err);
+      try {
+        let address = localStorage.getItem("walletAddress");
+        if (address) {
+          // Set provider using local storage wallet address
+          setProvider(
+            new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget)
+          );
+        } else if (web3auth.connected) {
+          // Set provider using Web3Auth if connected
+          const web3authProvider = await web3auth.connect();
+          setProvider(new ethers.providers.Web3Provider(web3authProvider));
+        } else if (window.ethereum) {
+          // Request account access and set provider using MetaMask
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          setProvider(new ethers.providers.Web3Provider(window.ethereum));
+        } else {
+          setError("No wallet provider found. Please connect a wallet.");
         }
+      } catch (err) {
+        setError("Error connecting to wallet. Please try again.");
+        console.error("Provider setup error:", err);
       }
     };
 
     setupProvider();
   }, []);
 
+  // Effect to fetch token balance when the provider or selected token changes
   useEffect(() => {
     fetchTokenBalance();
   }, [token, provider]);
 
+  // Function to fetch the name of an ERC20 token
   const fetchTokenName = async (tokenAddress) => {
     if (!provider) return;
 
@@ -77,30 +81,35 @@ const TokenTransfer = () => {
     }
   };
 
+  // Function to fetch the balance of the selected token
   const fetchTokenBalance = async () => {
     if (!provider) return;
-    let address = localStorage.getItem("walletAddress");
-    if (!address) {
-      const signer = provider.getSigner();
-      address = await signer.getAddress();
-    }
-    if (token === "ETH") {
-      const balance = await provider.getBalance(address);
-      setTokenBalance(ethers.utils.formatEther(balance));
-    } else {
-      try {
+
+    try {
+      let address = localStorage.getItem("walletAddress");
+      if (!address) {
+        const signer = provider.getSigner();
+        address = await signer.getAddress();
+      }
+      if (token === "ETH") {
+        // Fetch ETH balance
+        const balance = await provider.getBalance(address);
+        setTokenBalance(ethers.utils.formatEther(balance));
+      } else {
+        // Fetch ERC20 token balance
         await fetchTokenName(token);
         const tokenContract = new ethers.Contract(token, ERC20_ABI, provider);
         const balance = await tokenContract.balanceOf(address);
         const decimals = await tokenContract.decimals();
         setTokenBalance(ethers.utils.formatUnits(balance, decimals));
-      } catch (err) {
-        console.error("Error fetching token balance:", err);
-        setError("Invalid token address or token not found.");
       }
+    } catch (err) {
+      console.error("Error fetching token balance:", err);
+      setError("Invalid token address or token not found.");
     }
   };
 
+  // Function to handle the token transfer process
   const handleTransfer = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -116,6 +125,7 @@ const TokenTransfer = () => {
       const signer = provider.getSigner();
 
       if (token === "ETH") {
+        // Handle ETH transfer
         const tx = {
           to: recipientAddress,
           value: ethers.utils.parseEther(amount),
@@ -132,10 +142,12 @@ const TokenTransfer = () => {
           blockNumber: receipt.blockNumber,
         });
       } else {
+        // Handle ERC20 token transfer
         const tokenContract = new ethers.Contract(token, ERC20_ABI, signer);
+        const decimals = await tokenContract.decimals();
         const transaction = await tokenContract.transfer(
           recipientAddress,
-          ethers.utils.parseUnits(amount, 18)
+          ethers.utils.parseUnits(amount, decimals)
         );
         const receipt = await transaction.wait();
         setTransactionDetails({
@@ -154,21 +166,22 @@ const TokenTransfer = () => {
       setError("");
     } catch (error) {
       console.error("Error processing transaction:", error);
-      if (localStorage.getItem("walletAddress")) alert("Connect to wallet");
-      else alert("Payment failed. Please try again.");
+      setError("Payment failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  // Function to handle token selection
   const handleTokenSelect = (tokenAddress) => {
     setToken(tokenAddress);
     setResetButtonVisible(true);
   };
 
+  // Function to reset the selected token to ETH
   const handleResetToETH = () => {
     setToken("ETH");
-    setTokenName("Eth");
+    setTokenName("ETH");
     setCustomToken("");
     setResetButtonVisible(false);
   };
@@ -193,6 +206,7 @@ const TokenTransfer = () => {
               alt={tokenItem.symbol}
               className="token-logo"
               onClick={() => handleTokenSelect(tokenItem.address)}
+              key={tokenItem.address}
             />
           ))}
       </div>
@@ -201,19 +215,18 @@ const TokenTransfer = () => {
           type="text"
           placeholder="Enter custom token address"
           value={customToken}
-          onChange={(e) => {
-            setCustomToken(e.target.value);
-            setResetButtonVisible(true);
-          }}
+          onChange={(e) => setCustomToken(e.target.value)}
         />
         <button
           type="button"
           onClick={() => {
-            if (customToken) {
+            if (ethers.utils.isAddress(customToken)) {
               setToken(customToken);
               fetchTokenName(customToken);
               setCustomToken("");
               setResetButtonVisible(true);
+            } else {
+              setError("Invalid token address.");
             }
           }}
         >
@@ -287,9 +300,10 @@ const TokenTransfer = () => {
         ) : (
           <p>No transaction details available.</p>
         )}
-        <button onClick={() => setModalIsOpen(false)}>Close</button>{" "}
-      </Modal>{" "}
+        <button onClick={() => setModalIsOpen(false)}>Close</button>
+      </Modal>
     </div>
   );
 };
+
 export default TokenTransfer;

@@ -19,7 +19,6 @@ const CheckAllowance = ({
           placeholder="Enter token address"
         />
       </div>
-
       <div className="form-group">
         <label htmlFor="contract-address">Contract Address</label>
         <input
@@ -32,12 +31,11 @@ const CheckAllowance = ({
       </div>
 
       <button onClick={checkAllowance}>Check Allowance</button>
-
       {error && <p className="error-message">{error}</p>}
       {allowance !== null && (
         <div className="allowance-result">
           <h3>Allowance</h3>
-          <p>{allowance} Coins</p>
+          <p>{allowance} Tokens</p>{" "}
         </div>
       )}
     </>

@@ -9,24 +9,27 @@ import { chainConfig } from "../SignUp/signup";
 
 const WatchList = () => {
   const [tokens, setTokens] = useState(() => {
+    // Initialize state with tokens from local storage, if available
     const savedTokens = localStorage.getItem("tokens");
     return savedTokens ? JSON.parse(savedTokens) : [];
   });
   const [newToken, setNewToken] = useState("");
   const [tokenData, setTokenData] = useState({});
-  let [provider, setProvider] = useState(null);
+  const [provider, setProvider] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Function to set up the provider
     const setupProvider = async () => {
       let address = localStorage.getItem("walletAddress");
       if (address) {
-        provider = new ethers.providers.JsonRpcProvider(chainConfig.rpcTarget);
-        setProvider(provider);
-      }
-
-      if (!address) {
+        const providerInstance = new ethers.providers.JsonRpcProvider(
+          chainConfig.rpcTarget
+        );
+        setProvider(providerInstance);
+      } else {
+        // Set up provider based on Web3Auth or MetaMask
         try {
           if (web3auth.connected) {
             const web3authProvider = await web3auth.connect();
@@ -46,6 +49,7 @@ const WatchList = () => {
     setupProvider();
   }, []);
 
+  // Function to validate a token address
   const validateToken = async (token) => {
     try {
       if (!provider) {
@@ -70,6 +74,7 @@ const WatchList = () => {
     }
   };
 
+  // Function to handle adding a new token by address
   const handleAddToken = async () => {
     if (newToken) {
       setLoading(true);
@@ -90,6 +95,7 @@ const WatchList = () => {
     }
   };
 
+  // Function to handle adding a popular token
   const handleAddPopularToken = async (address) => {
     if (!tokens.includes(address)) {
       setLoading(true);
@@ -105,6 +111,7 @@ const WatchList = () => {
     }
   };
 
+  // Function to handle removing a token
   const handleRemoveToken = (address) => {
     const updatedTokens = tokens.filter((token) => token !== address);
     setTokens(updatedTokens);
@@ -112,6 +119,7 @@ const WatchList = () => {
   };
 
   useEffect(() => {
+    // Function to fetch data for all tokens in the watch list
     const fetchTokenData = async () => {
       if (!provider) return;
       const newTokenData = {};
