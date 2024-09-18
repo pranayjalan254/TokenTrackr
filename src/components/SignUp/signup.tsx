@@ -142,6 +142,14 @@ function Login() {
       <div className="login-note">
         <h3>Note: For full functionality, login with Web3Auth or MetaMask</h3>
       </div>
+      <div className="note">
+        <p>
+          The dApp is currently running on the Sepolia Testnet, and popular
+          tokens are configured for the testnet. To switch to the Ethereum
+          mainnet, both the chain configuration and the token addresses for the
+          popular tokens need to be updated.
+        </p>
+      </div>
     </div>
   );
 }
