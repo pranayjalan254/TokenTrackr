@@ -101,20 +101,22 @@ const HistoricalDataChart = () => {
 
   const getBalanceForDate = async (date, tokenAddress) => {
     if (!walletAddress) return 0;
+    console.log(tokenAddress);
     const startingBlockNumber = await getStartingBlockForDay(date);
-
     if (!tokenAddress) {
       const balance = await alchemy.core.getBalance(
         walletAddress,
         startingBlockNumber
       );
-      return Utils.formatEther(balance);
+      return Utils.formatUnits(balance, decimals);
     } else {
       const contract = new ethers.Contract(tokenAddress, ERC20_ABI, provider);
       const balance = await contract.balanceOf(walletAddress, {
         blockTag: startingBlockNumber,
       });
-      return Utils.formatUnits(balance, 18);
+      const decimals = await contract.decimals();
+      console.log(Utils.formatUnits(balance, decimals));
+      return Utils.formatUnits(balance, decimals);
     }
   };
 

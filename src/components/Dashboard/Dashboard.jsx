@@ -85,6 +85,11 @@ const Dashboard = () => {
       <header className="dashboard-header">
         <div className="dash-header">
           <div className="header">
+            <img
+              className="header-logo"
+              src="/logo.png"
+              alt="TokenTrackr Logo"
+            />
             <h1>TokenTrackr</h1>
           </div>
           <div>

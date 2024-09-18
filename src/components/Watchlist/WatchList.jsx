@@ -16,6 +16,7 @@ const WatchList = () => {
   const [tokenData, setTokenData] = useState({});
   let [provider, setProvider] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const setupProvider = async () => {
@@ -52,17 +53,17 @@ const WatchList = () => {
       }
       const contract = new ethers.Contract(token, ERC20_ABI, provider);
       const name = await contract.name();
+      const decimals = await contract.decimals();
       let address = localStorage.getItem("walletAddress");
       let userAddress;
       if (address) {
         userAddress = address;
-      }
-      if (!address) {
+      } else {
         const signer = provider.getSigner();
         userAddress = await signer.getAddress();
       }
       const balance = await contract.balanceOf(userAddress);
-      return { name, balance: ethers.utils.formatEther(balance) };
+      return { name, balance: ethers.utils.formatUnits(balance, decimals) };
     } catch (error) {
       console.error(`Error fetching data for ${token}:`, error);
       return null;
@@ -71,6 +72,7 @@ const WatchList = () => {
 
   const handleAddToken = async () => {
     if (newToken) {
+      setLoading(true);
       const result = await validateToken(newToken);
       if (result) {
         if (!tokens.includes(newToken)) {
@@ -84,11 +86,13 @@ const WatchList = () => {
           "Failed to add token. Please check the address or network and try again."
         );
       }
+      setLoading(false);
     }
   };
 
   const handleAddPopularToken = async (address) => {
     if (!tokens.includes(address)) {
+      setLoading(true);
       const result = await validateToken(address);
       if (result) {
         const updatedTokens = [...tokens, address];
@@ -97,6 +101,7 @@ const WatchList = () => {
       } else {
         alert("Failed to add popular token. Please try again changing network");
       }
+      setLoading(false);
     }
   };
 
@@ -138,7 +143,9 @@ const WatchList = () => {
           onChange={(e) => setNewToken(e.target.value)}
           placeholder="Enter token address"
         />
-        <button onClick={handleAddToken}>Add Token</button>
+        <button onClick={handleAddToken} disabled={loading}>
+          {loading ? "Adding..." : "Add Token"}
+        </button>
       </div>
       <div className="popular-tokens">
         <h3>Popular Tokens</h3>

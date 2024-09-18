@@ -100,7 +100,8 @@ const TokenAllowance = () => {
       const signer = provider.getSigner();
       const ownerAddress = await signer.getAddress();
       const balance = await contract.balanceOf(ownerAddress);
-      const formattedBalance = ethers.utils.formatUnits(balance, 18);
+      const decimals = await contract.decimals();
+      const formattedBalance = ethers.utils.formatUnits(balance, decimals);
       if (parseFloat(formattedBalance) < parseFloat(approvalAmount)) {
         setError("Insufficient token balance for approval.");
         return;

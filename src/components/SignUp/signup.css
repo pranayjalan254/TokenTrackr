@@ -8,6 +8,23 @@
   position: relative;
 }
 
+.login-header {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+
+  color: #fff;
+}
+
+.logo {
+  width: 50px;
+  height: auto;
+}
+
 .login-card {
   background: rgba(20, 27, 29, 0.6);
   padding: 40px;
@@ -77,6 +94,7 @@
   font-size: 0.8rem;
   text-align: center;
 }
+
 @media (max-width: 768px) {
   .login-title {
     font-size: 2rem;

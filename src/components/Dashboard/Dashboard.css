@@ -131,7 +131,11 @@
 .header h1 {
   margin: 0;
 }
-
+.header-logo {
+  height: 50px;
+  width: 50px;
+  margin-right: 10px;
+}
 .logout-button {
   position: absolute;
   top: 20px;

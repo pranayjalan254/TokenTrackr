@@ -15,27 +15,27 @@ declare global {
 const clientId = import.meta.env.VITE_CLIENT_ID ?? "";
 
 // chain config for mainnet ethereum
-// export const chainConfig = {
-//   chainNamespace: CHAIN_NAMESPACES.EIP155,
-//   chainId: "0x1",
-//   rpcTarget:
-//     "https://eth-mainnet.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
-//   displayName: "Ethereum Mainnet",
-//   blockExplorer: "https://etherscan.io/",
-//   ticker: "ETH",
-//   tickerName: "Ether",
-// };
-
 export const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
-  chainId: "0xaa36a7",
+  chainId: "0x1",
   rpcTarget:
-    "https://eth-sepolia.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
-  displayName: "Ethereum Sepolia Testnet",
-  blockExplorer: "https://sepolia.etherscan.io/",
+    "https://eth-mainnet.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
+  displayName: "Ethereum Mainnet",
+  blockExplorer: "https://etherscan.io/",
   ticker: "ETH",
-  tickerName: "Sepolia Ether",
+  tickerName: "Ether",
 };
+
+// export const chainConfig = {
+//   chainNamespace: CHAIN_NAMESPACES.EIP155,
+//   chainId: "0xaa36a7",
+//   rpcTarget:
+//     "https://eth-sepolia.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
+//   displayName: "Ethereum Sepolia Testnet",
+//   blockExplorer: "https://sepolia.etherscan.io/",
+//   ticker: "ETH",
+//   tickerName: "Sepolia Ether",
+// };
 
 const privateKeyProvider = new EthereumPrivateKeyProvider({
   config: { chainConfig },
@@ -123,6 +123,10 @@ function Login() {
 
   return (
     <div className="login-container">
+      <header onClick={() => navigate("/")} className="login-header">
+        <img src="/logo.png" alt="TokenTrackr Logo" className="logo" />
+        <h2>TokenTrackr</h2>
+      </header>
       <div className="login-card">
         <h2 className="login-title">Login</h2>
         <div className="login-buttons">
