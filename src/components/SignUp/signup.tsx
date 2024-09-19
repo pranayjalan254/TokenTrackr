@@ -19,7 +19,7 @@ export const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
   chainId: "0xaa36a7",
   rpcTarget: `https://eth-sepolia.g.alchemy.com/v2/${
-    import.meta.env.VITE_ALCHEMY_API
+    import.meta.env.VITE_API_KEY
   }`,
   displayName: "Ethereum Sepolia Testnet",
   blockExplorer: "https://sepolia.etherscan.io/",
