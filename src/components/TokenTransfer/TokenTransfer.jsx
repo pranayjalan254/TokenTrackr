@@ -193,7 +193,7 @@ const TokenTransfer = () => {
       <div className="selected-token-info">
         {resetButtonVisible && (
           <button className="reset-button" onClick={handleResetToETH}>
-            Reset to ETH
+            Transfer Eth
           </button>
         )}
       </div>

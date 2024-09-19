@@ -64,13 +64,14 @@
   max-width: 600px;
   margin: auto;
   padding: 20px;
-  background: #e3f2fd;
+  background: linear-gradient(to bottom, #043244 0%, #2b404a 100%);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #f0f0f5;
 }
 
 .modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   position: fixed;
   top: 0;
   left: 0;
@@ -79,22 +80,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
 }
 
 .transaction-details {
   margin-top: 20px;
+  border-top: 1px solid #303040;
+  padding-top: 10px;
 }
 
 .transaction-details p {
   margin: 5px 0;
-  font-size: small;
+  font-size: 14px;
   padding-bottom: 5px;
+  color: #c6c6c6;
 }
 
 .transaction-details strong {
   display: inline-block;
-  width: 150px;
-  color: #0d47a1;
+  width: 160px;
+  color: #00bfa5;
 }
 
 .token-logo {

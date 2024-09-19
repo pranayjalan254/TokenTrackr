@@ -13,12 +13,14 @@ declare global {
   }
 }
 
-// Define chain configuration for Ethereum Sepolia Testnet
+// Chain configuration for Ethereum Sepolia Testnet
+// Change it to the mainnet configuration if needed
 export const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
   chainId: "0xaa36a7",
-  rpcTarget:
-    "https://eth-sepolia.g.alchemy.com/v2/fNr3TwzXGZWEmV13p3mCxDAhHYj1fgKP",
+  rpcTarget: `https://eth-sepolia.g.alchemy.com/v2/${
+    import.meta.env.VITE_ALCHEMY_API
+  }`,
   displayName: "Ethereum Sepolia Testnet",
   blockExplorer: "https://sepolia.etherscan.io/",
   ticker: "ETH",

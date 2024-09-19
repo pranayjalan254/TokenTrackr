@@ -36,7 +36,6 @@ const config = {
   network: Network.ETH_SEPOLIA,
 };
 const alchemy = new Alchemy(config);
-const averageBlockTime = 13; // Average block time in seconds
 
 const HistoricalDataChart = () => {
   // State variables
@@ -88,16 +87,47 @@ const HistoricalDataChart = () => {
     setupProvider();
   }, [web3auth]);
 
-  // Function to get the starting block number for a given date
+  // Function to find the block number for a given timestamp using binary search
+  const findBlockNumberByTimestamp = async (
+    targetTimestamp,
+    startBlock,
+    endBlock
+  ) => {
+    while (startBlock <= endBlock) {
+      const midBlock = Math.floor((startBlock + endBlock) / 2);
+      const midBlockData = await alchemy.core.getBlock(midBlock);
+
+      if (!midBlockData) return startBlock;
+
+      const midBlockTimestamp = midBlockData.timestamp;
+
+      if (midBlockTimestamp === targetTimestamp) {
+        return midBlock;
+      } else if (midBlockTimestamp < targetTimestamp) {
+        startBlock = midBlock + 1;
+      } else {
+        endBlock = midBlock - 1;
+      }
+    }
+    return endBlock;
+  };
+
   const getStartingBlockForDay = async (date) => {
     const targetTimestamp = Math.floor(date.getTime() / 1000);
-    const latestBlock = await alchemy.core.getBlockNumber();
-    const latestBlockData = await alchemy.core.getBlock(latestBlock);
-    const latestBlockTimestamp = latestBlockData.timestamp;
 
-    const timeDifference = latestBlockTimestamp - targetTimestamp;
-    const estimatedBlocksAgo = Math.floor(timeDifference / averageBlockTime);
-    return latestBlock - estimatedBlocksAgo;
+    const latestBlock = await alchemy.core.getBlockNumber();
+
+    const startBlock = 0;
+    const endBlock = latestBlock;
+
+    // Find the block number closest to the target timestamp
+    const blockNumber = await findBlockNumberByTimestamp(
+      targetTimestamp,
+      startBlock,
+      endBlock
+    );
+
+    return blockNumber;
   };
 
   // Function to get the balance for a given date and token address
@@ -133,7 +163,7 @@ const HistoricalDataChart = () => {
           customToken || selectedToken
         );
         data.push({
-          date: new Date(currentDate).toISOString().split("T")[0],
+          date: new Date(currentDate).toLocaleDateString("en-CA"),
           balance: parseFloat(balance),
         });
         currentDate.setDate(currentDate.getDate() + 1);

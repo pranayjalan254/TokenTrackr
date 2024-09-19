@@ -99,7 +99,7 @@ This is the alchemy API Key to fetch the historical token balances. You need to 
 
 - **Web3Auth Session Handling:** Currently, Web3Auth behaves inconsistently when the site is refreshed. This issue needs to be resolved to ensure smoother user experience during session restoration and wallet reconnections. Metamask and manual input address works fine.
 
-- **Historical Balance Fetching:** The process of retrieving historical balances uses approximations for fetching block numbers. Various methods were tested, including binary search to find the nearest block number for a specific date, but this approach was too slow when querying a large range of dates. Although some success was found when retrieving historical balances for ChainLink tokens, providing nearly accurate results, the overall performance needs improvement.
+- **Historical Balance Fetching:** The process of retrieving historical balances uses Binary Search to find the blocknumber for a given timestamp. It is taking too much time to process even for small ranges of dates. This needs to be optimized.
 
 ## Note
 

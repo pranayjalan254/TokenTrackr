@@ -40,11 +40,11 @@
 }
 
 .token-logo:hover {
-  transform: scale(1.1);
+  transform: scale(1.3);
 }
 
 .selected {
-  border: 2px solid #4bc0c0;
+  border: 5px solid #4bc0c0;
   border-radius: 50%;
 }
 
@@ -67,11 +67,13 @@
   margin-top: 20px;
 }
 
-.date-picker-container {
-  display: flex;
-  padding: 20px;
+.date-button {
+  color: black;
+  background-color: #ccc;
 }
-
+.date-picker-container {
+  padding-top: 20px;
+}
 @media (max-width: 768px) {
   .chart-container {
     width: 90%;
