@@ -1,4 +1,4 @@
-# TokenTrackr
+# TokenTrackr - Crypto Portfolio App
 
 ### Monitor, track, and manage your tokens effortlessly.
 
