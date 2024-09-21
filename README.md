@@ -36,7 +36,7 @@ This decentralized application (dApp) enables users to manage their cryptocurren
 
 - **Custom Date Selection**: Users can select custom dates to view token balances at specific points in time, helping them analyze their portfolio's performance over any given period.
 
-- **Graphical Display**: The historical data is displayed through visually appealing charts, allowing users to track trends easily. This data is fetched from reliable sources like Bitquery and Alchemy, ensuring accuracy.
+- **Graphical Display**: The historical data is displayed through visually appealing charts, allowing users to track trends easily. This data is fetched from Alchemy API services, ensuring accuracy.
 
 #### 5. **Token Allowances Management**:
    TokenTrackr provides a feature for managing ERC-20 token allowances, which allows users to see which decentralized applications have permission to spend their tokens and modify or revoke those permissions.
