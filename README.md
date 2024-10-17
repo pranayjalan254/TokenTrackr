@@ -1,4 +1,4 @@
-# TokenTrackr
+# TokenTrackr - Crypto Portfolio App
 
 ### Monitor, track, and manage your tokens effortlessly.
 
@@ -6,7 +6,7 @@ This decentralized application (dApp) enables users to manage their cryptocurren
 
 ## Key Features
 
-1. **Authentication & Wallet Connection**:  
+#### 1. **Authentication & Wallet Connection**:  
    TokenTrackr offers multiple methods for users to connect their cryptocurrency wallets and authenticate their identity:
 
 - **Web3Auth Login**: Users can connect using Web3Auth, which simplifies the process of connecting to decentralized applications using familiar authentication methods (e.g., email or social accounts). It provides access to wallets even for non-technical users, leveraging private key management through Web3Auth.
@@ -15,35 +15,35 @@ This decentralized application (dApp) enables users to manage their cryptocurren
 
 - **Manual Wallet Address Input**: For users who prefer not to use MetaMask or Web3Auth, the dApp allows them to manually input their wallet address. After entering the wallet address, TokenTrackr fetches the balance and allows the user to track and monitor their assets, although certain actions like token transfers will not be available in this mode.
 
-2. **Token Management Dashboard**:
+#### 2. **Token Management Dashboard**:
    Once logged in, users are taken to the main dashboard, which acts as a central hub for all the dApp’s features. The dashboard is designed to display key wallet information in a concise and visually appealing format.
 
 - **Real-Time Wallet Balances**: The dashboard displays the user's wallet address, Ethereum (or other network) balance, and gas fees in real-time. This ensures that users are always aware of their current holdings and transaction costs.
 
 - **Responsive Design**: The dashboard is fully responsive, ensuring users can interact with it smoothly across different devices. On smaller screens, non-essential information (such as current gas prices) is hidden to enhance usability.
 
-3. **Token Watch List**:
+#### 3. **Token Watch List**:
    Users can create a personalized token watch list, allowing them to keep track of specific tokens they are interested in. The watch list can include popular tokens, custom tokens, or any ERC-20 token that the user wants to monitor.
 
 - **Token Logos & Icons**: For popular tokens, the dApp displays token logos instead of text-based names, improving the visual appeal and user experience.
 
 - **Custom Token Integration**: If a token is not on the watch list, users can input the custom token address, and TokenTrackr will fetch its balance and allow it to be added to the list.
 
-4. **Historical Data Tracking**:
+#### 4. **Historical Data Tracking**:
    The historical data tracking feature allows users to view their wallet balances over time, providing an in-depth understanding of their token holdings' performance.
 
 - **Multiple Token Support**: The dApp supports the historical tracking of several popular tokens (e.g., USDC, DAI, Wrapped Ether, ChainLink, Uniswap), allowing users to analyze their portfolios comprehensively.
 
 - **Custom Date Selection**: Users can select custom dates to view token balances at specific points in time, helping them analyze their portfolio's performance over any given period.
 
-- **Graphical Display**: The historical data is displayed through visually appealing charts, allowing users to track trends easily. This data is fetched from reliable sources like Bitquery and Alchemy, ensuring accuracy.
+- **Graphical Display**: The historical data is displayed through visually appealing charts, allowing users to track trends easily. This data is fetched from Alchemy API services, ensuring accuracy.
 
-5. **Token Allowances Management**:
+#### 5. **Token Allowances Management**:
    TokenTrackr provides a feature for managing ERC-20 token allowances, which allows users to see which decentralized applications have permission to spend their tokens and modify or revoke those permissions.
 
 - **Custom Token Allowances**: The dApp also supports custom tokens, allowing users to add any ERC-20 token and view or adjust allowances for that token. Extensive care taken to restrict users to allow tokens more than their balance.
-
-6. **Token Transfer & Custom Token Support**:
+ 
+#### 6. **Token Transfer & Custom Token Support**:
    TokenTrackr allows users to seamlessly transfer tokens directly through the platform. Users can transfer Sepolia ETH or other supported tokens using a clean and intuitive UI.
 
 - **Popular Tokens & Custom Token Selection**: The dApp includes a list of popular tokens users can easily select for transfer. Additionally, users can input a custom token address if the token they want to transfer isn't on the list, making the platform flexible and user-friendly.
@@ -90,10 +90,10 @@ To run this project, you will need to add the following environment variables to
 Create a .env file in the root directory.
 
 `VITE_CLIENT_ID`  
-You need to setup your Web3auth Dashboard to get the clientID.
+You need to setup your Web3auth Dashboard and setup a new project to get the clientID.
 
 `VITE_API_KEY`  
-This is the alchemy API Key to fetch the historical token balances. You need to make an alchemy account and get the API Key.
+This is the alchemy API Key to fetch the historical token balances. You need to make an alchemy account and set up a new project to get the API Key.
 
 ## Improvements Needed
 
@@ -107,7 +107,8 @@ The dApp currently runs on Sepolia Tesnet. The popular tokens are configured as 
 
 ## Demo
 
-[TokenTrackr](https://token-trackr.vercel.app/)
+[TokenTrackr](https://token-trackr.vercel.app/)  
+[Demo Video](https://drive.google.com/file/d/16r-JqL3mb_YU5Sto8wJxluIPk-Q1XYEq/view?usp=sharing)
 
 ## Support
 
