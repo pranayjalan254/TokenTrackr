@@ -10,11 +10,11 @@ import "./signup.css";
 declare global {
   interface Window {
     ethereum?: any;
+    onTelegramAuth?: any;
   }
 }
 
 // Chain configuration for Ethereum Sepolia Testnet
-// Change it to the mainnet configuration if needed
 export const chainConfig = {
   chainNamespace: CHAIN_NAMESPACES.EIP155,
   chainId: "0xaa36a7",
@@ -63,6 +63,35 @@ function Login() {
     };
 
     init();
+
+    // Adding Telegram script for login button
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-widget.js?22";
+    script.async = true;
+    script.setAttribute("data-telegram-login", "tokenmangrbot"); // Replace with your bot username
+    script.setAttribute("data-size", "medium");
+    script.setAttribute("data-onauth", "onTelegramAuth(user)");
+    script.setAttribute("data-request-access", "write");
+    document.getElementById("telegram-login")?.appendChild(script);
+
+    // Define the callback function for Telegram login
+    window.onTelegramAuth = (user: {
+      first_name: string;
+      last_name: string;
+      id: string;
+      username: string;
+    }) => {
+      alert(
+        "Logged in as " +
+          user.first_name +
+          " " +
+          user.last_name +
+          " (" +
+          user.id +
+          (user.username ? ", @" + user.username : "") +
+          ")"
+      );
+    };
   }, [navigate]);
 
   // Handle Web3Auth login
@@ -139,6 +168,8 @@ function Login() {
               Connect with Address
             </button>
           </div>
+          {/* Telegram Login Button */}
+          <div id="telegram-login" className="telegram-login"></div>
         </div>
       </div>
       <div className="login-note">
